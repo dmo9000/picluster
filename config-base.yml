@@ -4,7 +4,7 @@
   gather_facts: no
 
   vars:
-    packages: { "which", "gcc-c++" }
+    packages: { "git", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++" }
 
   vars_prompt:
     - name: "ansible_password"
@@ -19,26 +19,64 @@
   - name: display hostname 
     shell: /usr/bin/hostname -f
 
-  - name: configure http proxy for dnf
-    lineinfile:
-      file: /etc/dnf/dnf.conf
-      regexp: "^proxy=.*$"
-      line: "proxy=http://mightymouse:3128/"
-      state: present
+  - name: set selinux to permissive
+    shell: /sbin/setenforce 0
+    become: true
 
-  - name: install base /etc/hosts file
-    file:
+  - name: install /etc/hosts file
+    copy:
       dest: /etc/hosts
       src: files/etc/hosts
       owner: root
       group: root
       mode: 0o644 
+    become: true
+
+
+  - name: install /etc/dnf/dnf.conf file
+    copy:
+      dest: /etc/dnf/dnf.conf
+      src: files/etc/dnf/dnf.conf
+      owner: root
+      group: root
+      mode: 0o644 
+    become: true
 
   - name: install prerequisite packages
     dnf: 
       name: "{{ item }}"
-      enablerepo: testing
       state: present
-      with_items: "{{ packages }}"
+    with_items: "{{ packages }}"
+    become: true
+    tags:
+      - installpackages
 
+#  - name: destroy ~/git-local 
+#    file:
+#      dest: ~/git-local 
+#      state: absent
 
+  - name: create ~/git-local/bbsd
+    file:
+      dest: ~/git-local/bbsd 
+      state: directory
+      recurse: true
+
+  - name: checkout bbsd sources to ~/git-local/bbsd
+    git:
+      repo: 'https://github.com/dmo9000/bbsd.git'
+      dest: ~/git-local/bbsd
+
+  - name: build bbsd sources
+    shell: "(cd ~/git-local/bbsd && make)"
+
+  - name: kill old bbsd instances
+    shell: "(cd ~/git-local/bbsd && /usr/bin/killall -9 pmain ) || exit 0"
+    tags:
+      - killserver
+      - runserver
+
+  - name: run bbsd 
+    shell: "(cd ~/git-local/bbsd && ./pmain )"
+    tags:
+      - runserver
