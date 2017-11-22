@@ -1,0 +1,19 @@
+---
+- hosts: all 
+  remote_user: bootstrap 
+  gather_facts: no
+
+  vars_prompt:
+    - name: "ansible_password"
+      prompt: "Enter password for bootstrap user" 
+      hidden: yes
+
+  tasks:
+  - debug: msg="{{ ansible_password }}"
+    delegate_to: localhost
+
+#  - fail: msg="stoping here"
+
+  - name: say hello 
+    shell: /sbin/ip addr show eth0
+
