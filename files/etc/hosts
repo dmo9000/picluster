@@ -1,3 +1,5 @@
+127.0.0.1     localhost.localdomain localhost
+::1           localhost6.localdomain6 localhost6
 192.168.1.100	mightymouse
 192.168.1.180	uno
 192.168.1.181 dos	

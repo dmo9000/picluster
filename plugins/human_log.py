@@ -27,9 +27,10 @@ except ImportError:
     import json
 
 # Fields to reformat output for
-FIELDS = ['cmd', 'command', 'start', 'end', 'delta', 'msg', 'stdout',
-          'stderr', 'results']
+#FIELDS = ['cmd', 'command', 'start', 'end', 'delta', 'msg', 'stdout',
+#          'stderr', 'results']
 
+FIELDS = ['stdout', 'stderr', 'rc']
 
 class CallbackModule(object):
 

@@ -3,17 +3,42 @@
   remote_user: bootstrap 
   gather_facts: no
 
+  vars:
+    packages: { "which", "gcc-c++" }
+
   vars_prompt:
     - name: "ansible_password"
       prompt: "Enter password for bootstrap user" 
       hidden: yes
 
   tasks:
-  - debug: msg="{{ ansible_password }}"
-    delegate_to: localhost
+  - name: set hostname permanently 
+    shell: "/usr/bin/hostnamectl set-hostname {{ inventory_hostname }}"
+    become: true
 
-#  - fail: msg="stoping here"
+  - name: display hostname 
+    shell: /usr/bin/hostname -f
 
-  - name: say hello 
-    shell: /sbin/ip addr show eth0
+  - name: configure http proxy for dnf
+    lineinfile:
+      file: /etc/dnf/dnf.conf
+      regexp: "^proxy=.*$"
+      line: "proxy=http://mightymouse:3128/"
+      state: present
+
+  - name: install base /etc/hosts file
+    file:
+      dest: /etc/hosts
+      src: files/etc/hosts
+      owner: root
+      group: root
+      mode: 0o644 
+
+  - name: install prerequisite packages
+    dnf: 
+      name: "{{ item }}"
+      enablerepo: testing
+      state: present
+      with_items: "{{ packages }}"
+
 
