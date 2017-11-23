@@ -56,21 +56,41 @@
       dest: ~/git-local/bbsd 
       state: directory
       recurse: true
+    tags:
+      - bbsd
 
   - name: checkout bbsd sources to ~/git-local/bbsd
     git:
       repo: 'https://github.com/dmo9000/bbsd.git'
       dest: ~/git-local/bbsd
+    tags:
+      - bbsd
 
   - name: build bbsd sources
     shell: "(cd ~/git-local/bbsd && make)"
+    tags:
+      - bbsd    
+
+  - name: stop bbsd prior to upgrade
+    service: 
+      name: bbsd
+      state: stopped
+      enabled: yes
+    become: true
+    tags:
+      - bbsd
+
 
   - name: install bbbsd 
     shell: "(cd /home/bootstrap/git-local/bbsd && make install)"
     become: true
+    tags:
+      - bbsd    
 
   - name: show installation
     shell: find /usr/local/bbsd
+    tags:
+      - bbsd
 
   - name: discover vrrp_priority
     set_fact:
@@ -101,3 +121,32 @@
     become: true
     tags:
       - keepalived
+
+  - name: start & enable bbsd
+    service: 
+      name: bbsd
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - bbsd
+
+  - name: install haproxy.cfg
+    template:
+      dest: /etc/haproxy/haproxy.cfg
+      src: files/etc/haproxy/haproxy.cfg
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - haproxy
+
+  - name: start & enable haproxy
+    service: 
+      name: haproxy
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - haproxy
