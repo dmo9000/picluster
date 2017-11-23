@@ -1,10 +1,10 @@
 ---
 - hosts: all 
   remote_user: bootstrap 
-  gather_facts: no
+  gather_facts: yes 
 
   vars:
-    packages: { "git", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "ccache" }
+    packages: { "git", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "ccache", "fortune-mod" }
 
   vars_prompt:
     - name: "ansible_password"
@@ -66,7 +66,38 @@
     shell: "(cd ~/git-local/bbsd && make)"
 
   - name: install bbbsd 
-    shell: "(cd ~/git-local/bbsd && make install)"
+    shell: "(cd /home/bootstrap/git-local/bbsd && make install)"
     become: true
 
+  - name: show installation
+    shell: find /usr/local/bbsd
 
+  - name: discover vrrp_priority
+    set_fact:
+      vrrp_priority: "{{ ansible_eth0.ipv4.address.split('.')[3] }}" 
+    tags:
+      - keepalived
+
+  - debug: msg="vrrp_priority is {{ vrrp_priority }}"
+    tags:
+      - keepalived
+
+  - name: install keepalived.conf
+    template:
+      dest: /etc/keepalived/keepalived.conf
+      src: files/etc/keepalived/keepalived.conf
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - keepalived
+
+  - name: start & enable keepalived
+    service: 
+      name: keepalived
+      state: started
+      enabled: yes
+    become: true
+    tags:
+      - keepalived
