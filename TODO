@@ -1,0 +1,5 @@
+* haproxy health checks
+	https://serverfault.com/questions/249316/how-can-i-remove-balanced-node-from-haproxy-via-command-line
+	https://stackoverflow.com/questions/16950483/how-can-i-make-haproxy-reject-tcp-connections-when-all-backend-servers-are-down
+	https://discourse.haproxy.org/t/server-down-stop-new-requests/1378
+	https://www.haproxy.com/documentation/aloha/7-0/haproxy/healthchecks/		
