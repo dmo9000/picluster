@@ -4,7 +4,7 @@
   gather_facts: yes 
 
   vars:
-    packages: { "git", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "ccache", "fortune-mod" }
+    packages: { "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "ccache", "fortune-mod" }
 
   vars_prompt:
     - name: "ansible_password"
@@ -130,6 +130,13 @@
     become: true
     tags:
       - bbsd
+
+  - name: systemctl daemon-reload
+    shell: /usr/bin/systemctl daemon-reload
+    become: true
+    tags:
+      - bbsd
+
 
   - name: install haproxy.cfg
     template:
