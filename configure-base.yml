@@ -4,7 +4,7 @@
   gather_facts: yes 
 
   vars:
-    packages: { "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "ccache", "fortune-mod" }
+    packages: { "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "ccache", "fortune-mod", "lrzsz" }
 
   vars_prompt:
     - name: "ansible_password"
@@ -50,6 +50,24 @@
     become: true
     tags:
       - installpackages
+      - ntpd
+
+  - name: set timezone
+    shell: timedatectl set-timezone Australia/Melbourne
+    become: true
+
+  - name: display timezone
+    shell: timedatectl 
+    become: true
+
+  - name: start & enable ntpd
+    service: 
+      name: ntpd
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - ntpd
 
   - name: create ~/git-local/bbsd
     file:
@@ -157,3 +175,15 @@
     become: true
     tags:
       - haproxy
+
+
+  - name: refresh OEM software
+    git:
+      repo: 'https://github.com/dmo9000/z80core.git'
+      dest: ~/git-local/z80core
+    tags:
+      - oemsoftware    
+
+  - name: make OEM software available
+    shell: cp /home/bootstrap/git-local/z80core/z80oem/*.arc /usr/local/bbsd/data/
+    become: true
