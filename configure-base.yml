@@ -69,6 +69,14 @@
     tags:
       - ntpd
 
+
+  - name: remove ~/git-local/bbsd
+    file:
+      dest: ~/git-local/bbsd 
+      state: absent     
+    tags:
+      - bbsd
+
   - name: create ~/git-local/bbsd
     file:
       dest: ~/git-local/bbsd 
