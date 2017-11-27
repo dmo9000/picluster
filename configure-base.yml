@@ -107,7 +107,7 @@
       - bbsd
 
 
-  - name: install bbbsd 
+  - name: install bbsd 
     shell: "(cd /home/bootstrap/git-local/bbsd && make install)"
     become: true
     tags:
