@@ -4,7 +4,7 @@
   gather_facts: yes 
 
   vars:
-    packages: { "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "ccache", "fortune-mod", "lrzsz" }
+    packages: { "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "ccache", "fortune-mod", "lrzsz", "ii", "epic", "BitchX" }
 
   vars_prompt:
     - name: "ansible_password"
@@ -106,7 +106,6 @@
     tags:
       - bbsd
 
-
   - name: install bbsd 
     shell: "(cd /home/bootstrap/git-local/bbsd && make install)"
     become: true
@@ -162,6 +161,13 @@
     become: true
     tags:
       - bbsd
+
+  - name: show bbsd service status
+    shell: systemctl status bbsd
+    become: true
+    tags:
+      - bbsd
+      - bbsd_status
 
 
   - name: install haproxy.cfg
