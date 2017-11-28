@@ -105,6 +105,7 @@
     become: true
     tags:
       - bbsd
+      - bbsd_stop
 
   - name: install bbsd 
     shell: "(cd /home/bootstrap/git-local/bbsd && make install)"
@@ -155,6 +156,7 @@
     become: true
     tags:
       - bbsd
+      - bbsd_restart
 
   - name: systemctl daemon-reload
     shell: /usr/bin/systemctl daemon-reload

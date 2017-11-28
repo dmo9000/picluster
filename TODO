@@ -3,3 +3,4 @@
 	https://stackoverflow.com/questions/16950483/how-can-i-make-haproxy-reject-tcp-connections-when-all-backend-servers-are-down
 	https://discourse.haproxy.org/t/server-down-stop-new-requests/1378
 	https://www.haproxy.com/documentation/aloha/7-0/haproxy/healthchecks/		
+  https://www.haproxy.com/blog/failover-and-worst-case-management-with-haproxy/
