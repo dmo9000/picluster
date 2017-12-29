@@ -86,17 +86,17 @@
     tags:
       - bbsd
 
-#  - name: checkout bbsd sources to ~/git-local/bbsd
-#    git:
-#      repo: 'https://github.com/dmo9000/bbsd.git'
-#      dest: ~/git-local/bbsd
-#    tags:
-#      - bbsd
+  - name: checkout bbsd sources to ~/git-local/bbsd
+    git:
+      repo: 'https://github.com/dmo9000/bbsd.git'
+      dest: ~/git-local/bbsd
+    tags:
+      - bbsd
 
-#  - name: build bbsd sources
-#    shell: "(cd ~/git-local/bbsd &&  make clean && make)"
-#    tags:
-#      - bbsd    
+  - name: build bbsd sources
+    shell: "(cd ~/git-local/bbsd &&  make clean && make)"
+    tags:
+      - bbsd    
 
   - name: stop bbsd prior to upgrade
     service: 
@@ -108,11 +108,11 @@
       - bbsd
       - bbsd_stop
 
-#  - name: install bbsd 
-#    shell: "(cd /home/bootstrap/git-local/bbsd && make install)"
-#    become: true
-#    tags:
-#      - bbsd    
+  - name: install bbsd 
+    shell: "(cd /home/bootstrap/git-local/bbsd && make install)"
+    become: true
+    tags:
+      - bbsd    
 
   - name: show installation
     shell: find /usr/local/bbsd
