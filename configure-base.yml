@@ -4,7 +4,8 @@
   gather_facts: yes 
 
   vars:
-    packages: { "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "ccache", "fortune-mod", "lrzsz", "ii", "epic", "BitchX" }
+    packages: { "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "ccache", 
+                "fortune-mod", "frotz", "lrzsz", "ii", "epic", "BitchX" }
 
   vars_prompt:
     - name: "ansible_password"
@@ -85,17 +86,17 @@
     tags:
       - bbsd
 
-  - name: checkout bbsd sources to ~/git-local/bbsd
-    git:
-      repo: 'https://github.com/dmo9000/bbsd.git'
-      dest: ~/git-local/bbsd
-    tags:
-      - bbsd
+#  - name: checkout bbsd sources to ~/git-local/bbsd
+#    git:
+#      repo: 'https://github.com/dmo9000/bbsd.git'
+#      dest: ~/git-local/bbsd
+#    tags:
+#      - bbsd
 
-  - name: build bbsd sources
-    shell: "(cd ~/git-local/bbsd &&  make clean && make)"
-    tags:
-      - bbsd    
+#  - name: build bbsd sources
+#    shell: "(cd ~/git-local/bbsd &&  make clean && make)"
+#    tags:
+#      - bbsd    
 
   - name: stop bbsd prior to upgrade
     service: 
@@ -107,11 +108,11 @@
       - bbsd
       - bbsd_stop
 
-  - name: install bbsd 
-    shell: "(cd /home/bootstrap/git-local/bbsd && make install)"
-    become: true
-    tags:
-      - bbsd    
+#  - name: install bbsd 
+#    shell: "(cd /home/bootstrap/git-local/bbsd && make install)"
+#    become: true
+#    tags:
+#      - bbsd    
 
   - name: show installation
     shell: find /usr/local/bbsd
@@ -144,6 +145,18 @@
       name: keepalived
       state: started
       enabled: yes
+    become: true
+    tags:
+      - keepalived
+
+  - name: display keepalived status
+    shell: /bin/systemctl status keepalived.service 
+    become: true
+    tags:
+      - keepalived
+
+  - name: display keepalived vip 
+    shell: /sbin/ip addr show  
     become: true
     tags:
       - keepalived
@@ -191,6 +204,7 @@
     become: true
     tags:
       - haproxy
+      - haproxy_restart
 
 
   - name: refresh OEM software
