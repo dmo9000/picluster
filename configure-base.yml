@@ -143,7 +143,7 @@
   - name: start & enable keepalived
     service: 
       name: keepalived
-      state: started
+      state: restarted
       enabled: yes
     become: true
     tags:

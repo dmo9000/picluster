@@ -15,7 +15,7 @@ vrrp_instance VI_1 {
     priority {{ vrrp_priority }} 
     advert_int 1
     virtual_ipaddress {
-       	192.168.0.190
+       	192.168.0.190 via 192.168.0.1 dev eth0
     }
 }
 
