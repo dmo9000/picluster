@@ -1,0 +1,21 @@
+! Configuration File for keepalived
+
+global_defs {
+   notification_email {
+			dan.morriss115@gmail.com	
+   }
+   notification_email_from picluster-{{ inventory_hostname }}@intergalatic.net.xz
+   smtp_connect_timeout 30
+}
+
+vrrp_instance VI_1 {
+    state BACKUP 
+    interface eth0
+    virtual_router_id 52
+    priority {{ vrrp_priority }} 
+    advert_int 1
+    virtual_ipaddress {
+       	192.168.0.190
+    }
+}
+

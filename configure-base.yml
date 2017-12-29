@@ -132,7 +132,7 @@
   - name: install keepalived.conf
     template:
       dest: /etc/keepalived/keepalived.conf
-      src: files/etc/keepalived/keepalived.conf
+      src: "files/etc/keepalived/keepalived.conf.{{ inventory_hostname }}"
       owner: root
       group: root
       mode: 0o644
