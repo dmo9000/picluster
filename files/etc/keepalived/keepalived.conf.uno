@@ -1,1 +1,1 @@
-keepalived.conf.master
+keepalived.conf.backup

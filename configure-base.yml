@@ -4,8 +4,8 @@
   gather_facts: yes 
 
   vars:
-    packages: { "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "ccache", 
-                "fortune-mod", "frotz", "lrzsz", "ii", "epic", "BitchX" }
+    packages: { "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "bind-utils", "ccache", 
+                "fortune-mod", "frotz", "lrzsz", "ii", "epic", "BitchX", "mailx", "postfix", "net-snmp", "net-snmp-utils", "mlocate", "telnet", "postfix-perl-scripts", "rsyslog" }
 
   vars_prompt:
     - name: "ansible_password"
@@ -24,6 +24,42 @@
     shell: /sbin/setenforce 0
     become: true
 
+  - name: set selinux to permissive
+    lineinfile:
+      path: /etc/sysconfig/selinux
+      regexp: '^SELINUX='
+      line: 'SELINUX=permissive'
+    become: true
+
+  - name: install /etc/dhcp/dhclient.conf file
+    template:
+      dest: /etc/dhcp/dhclient.conf
+      src: files/etc/dhcp/dhclient.conf
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - network 
+
+  - name: restart and enable rsyslog 
+    service:
+      name: rsyslog 
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - rsyslog 
+
+  - name: restart NetworkManager to pickup resolver settings
+    service:
+      name: NetworkManager 
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - network 
+
   - name: install /etc/hosts file
     copy:
       dest: /etc/hosts
@@ -32,7 +68,6 @@
       group: root
       mode: 0o644 
     become: true
-
 
   - name: install /etc/dnf/dnf.conf file
     copy:
@@ -53,6 +88,43 @@
       - installpackages
       - ntpd
 
+  - name: create /var/log/named 
+    file:
+      dest: /var/log/named
+      state: directory
+      owner: named
+      group: named
+      recurse: true
+    become: true
+    tags:
+      - named 
+
+  - name: install /etc/named.conf 
+    template:
+      dest: /etc/named.conf
+      src: files/etc/named.conf
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - named 
+
+  - name: start & enable named
+    service: 
+      name: named
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - named 
+
+  - name: display named status
+    shell: /bin/systemctl status named.service
+    become: true
+    tags:
+      - named
+
   - name: set timezone
     shell: timedatectl set-timezone Australia/Melbourne
     become: true
@@ -70,6 +142,20 @@
     tags:
       - ntpd
 
+  - name: set mail relay host for postfix
+    shell: /usr/sbin/postconf -e relayhost=mail.optusnet.com.au
+    become: true
+    tags:
+      - postfix 
+
+  - name: start and enable postfix
+    service: 
+      name: postfix
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - postfix 
 
   - name: remove ~/git-local/bbsd
     file:
