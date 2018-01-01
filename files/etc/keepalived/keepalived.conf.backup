@@ -2,20 +2,22 @@
 
 global_defs {
    notification_email {
-			dan.morriss115@gmail.com	
+            dan.morriss115@gmail.com
    }
-   notification_email_from picluster-{{ inventory_hostname }}@intergalatic.net.xz
+   notification_email_from dan.morriss115@gmail.com
+   smtp_server localhost
    smtp_connect_timeout 30
 }
 
 vrrp_instance VI_1 {
+    smtp_alert
     state BACKUP 
     interface eth0
     virtual_router_id 52
     priority {{ vrrp_priority }} 
     advert_int 1
     virtual_ipaddress {
-       	192.168.0.190 via 192.168.0.1 dev eth0	
+       	192.168.0.190 
     }
 }
 
