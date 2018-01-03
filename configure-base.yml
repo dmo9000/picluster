@@ -6,7 +6,7 @@
   vars:
     packages: { "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "bind-utils", "ccache",
                 "fortune-mod", "frotz", "lrzsz", "ii", "epic", "BitchX", "mailx", "postfix", "net-snmp", "net-snmp-utils", "mlocate", "telnet",
-                "postfix-perl-scripts", "rsyslog", "httpd", "openldap", "openldap-clients", "openldap-servers", "nodejs", "golang" }
+                "postfix-perl-scripts", "rsyslog", "httpd", "openldap", "openldap-clients", "openldap-servers", "nodejs", "golang", "monit" }
 
 
   vars_prompt:
@@ -136,8 +136,17 @@
     tags:
       - httpd
 
+  - name: start & enable monit
+    service:
+      name: monit
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - monit
 
-  - name: start & enable httpd
+
+  - name: start & enable httpd 
     service:
       name: httpd
       state: restarted
