@@ -142,7 +142,7 @@
       src: "files/etc/monitrc"
       owner: root
       group: root
-      mode: 0o644
+      mode: 0o700
     become: true
     tags:
       - monit 
@@ -191,6 +191,18 @@
 
   - name: set mail relay host for postfix
     shell: /usr/sbin/postconf -e relayhost=mail.optusnet.com.au
+    become: true
+    tags:
+      - postfix
+
+  - name: set inet_interfaces for postfix
+    shell: /usr/sbin/postconf -e inet_interfaces=all
+    become: true
+    tags:
+      - postfix
+
+  - name: set mynetworks for postfix
+    shell: /usr/sbin/postconf -e mynetworks=192.168.0.0/24
     become: true
     tags:
       - postfix

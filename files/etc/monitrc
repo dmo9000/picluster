@@ -175,10 +175,18 @@ check system $HOST
 
 check host picluster-190 with address 192.168.0.190
     if failed
+        port 8080
+        protocol http
+        status = 200
+    then alert
+    if failed
         port 8024
     then alert
     if failed
         port 8023
+    then alert
+    if failed
+        port 2812 
     then alert
     if failed
         port 80
@@ -199,10 +207,18 @@ check host picluster-190 with address 192.168.0.190
 
 check host uno-180 with address 192.168.0.180 
     if failed
+        port 8080
+        protocol http
+        status = 200
+    then alert
+    if failed
         port 8024
     then alert
     if failed
         port 8023
+    then alert
+    if failed
+        port 2812
     then alert
     if failed
         port 80
@@ -224,10 +240,18 @@ check host uno-180 with address 192.168.0.180
 
 check host dos-181 with address 192.168.0.181
     if failed
+        port 8080
+        protocol http
+        status = 200
+    then alert
+    if failed
         port 8024
     then alert
     if failed
         port 8023
+    then alert
+    if failed
+        port 2812
     then alert
     if failed
         port 80
@@ -248,10 +272,18 @@ check host dos-181 with address 192.168.0.181
 
 check host tres-182 with address 192.168.0.182
     if failed
+        port 8080
+        protocol http
+        status = 200
+    then alert
+    if failed
         port 8024
     then alert
     if failed
         port 8023
+    then alert
+    if failed
+        port 2812
     then alert
     if failed
         port 80
@@ -272,14 +304,23 @@ check host tres-182 with address 192.168.0.182
 
 check host cuatro-183 with address 192.168.0.183
     if failed
+        port 8080
+        protocol http
+        status = 200
+    then alert
+    if failed
         port 8024
     then alert
     if failed
         port 8023
     then alert
     if failed
+        port 2812
+    then alert
+    if failed
         port 80
         protocol http
+        status = 200
     then alert
     if failed
         port 53
