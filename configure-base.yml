@@ -136,6 +136,17 @@
     tags:
       - httpd
 
+  - name: install monitrc 
+    template:
+      dest: /etc/monitrc
+      src: "files/etc/monitrc"
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - monit 
+
   - name: start & enable monit
     service:
       name: monit
