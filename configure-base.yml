@@ -90,6 +90,16 @@
       - installpackages
       - ntpd
 
+  - name: stop & disable monit
+    service:
+      name: monit
+      state: stopped 
+      enabled: no 
+    become: true
+    tags:
+      - monit
+
+
   - name: create /var/log/named
     file:
       dest: /var/log/named
@@ -137,6 +147,7 @@
     become: true
     tags:
       - httpd 
+      - content
 
   - name: set Apache default port to 8080 
     lineinfile:
@@ -157,16 +168,6 @@
     become: true
     tags:
       - monit 
-
-  - name: start & enable monit
-    service:
-      name: monit
-      state: restarted
-      enabled: yes
-    become: true
-    tags:
-      - monit
-
 
   - name: start & enable httpd 
     service:
@@ -214,6 +215,13 @@
 
   - name: set mynetworks for postfix
     shell: /usr/sbin/postconf -e mynetworks=192.168.0.0/24
+    become: true
+    tags:
+      - postfix
+
+  # WARNING: do not do this for production or you will lose all mail!
+  - name: set mail relay host for postfix
+    shell: /usr/sbin/postsuper -d ALL
     become: true
     tags:
       - postfix
@@ -375,3 +383,13 @@
     become: true
     tags:
       - oemsoftware
+
+  - name: start & enable monit
+    service:
+      name: monit
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - monit
+

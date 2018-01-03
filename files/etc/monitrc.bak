@@ -214,26 +214,34 @@ check host uno-180 with address 192.168.0.180
         protocol http
         request "/"
         status = 200
+    then alert
     if failed
         port 8024
+    then alert
     if failed
         port 8023
+    then alert
     if failed
         port 2812
+    then alert
     if failed
         port 80
         protocol http
         request "/"
         status = 200
+    then alert
     if failed
         port 53
         protocol dns
+    then alert
     if failed
         port 25
         protocol smtp
+    then alert
     if failed
         port 22
         protocol ssh
+    then alert
 
 
 check host dos-181 with address 192.168.0.181
@@ -242,74 +250,26 @@ check host dos-181 with address 192.168.0.181
         protocol http
         request "/"
         status = 200
+    then alert
     if failed
         port 8024
+    then alert
     if failed
         port 8023
+    then alert
     if failed
         port 2812
+    then alert
     if failed
         port 80
         protocol http
         request "/"
         status = 200
+    then alert
     if failed
         port 53
         protocol dns
-    if failed
-        port 25
-        protocol smtp
-    if failed
-        port 22
-        protocol ssh
-
-check host tres-182 with address 192.168.0.182
-   if failed
-        port 8080
-        protocol http
-        request "/"
-        status = 200
-    if failed
-        port 8024
-    if failed
-        port 8023
-    if failed
-        port 2812
-    if failed
-        port 80
-        protocol http
-        request "/"
-        status = 200
-    if failed
-        port 53
-        protocol dns
-    if failed
-        port 25
-        protocol smtp
-    if failed
-        port 22
-        protocol ssh
-
-check host cuatro-183 with address 192.168.0.183
-   if failed
-        port 8080
-        protocol http
-        request "/"
-        status = 200
-    if failed
-        port 8024
-    if failed
-        port 8023
-    if failed
-        port 2812
-    if failed
-        port 80
-        protocol http
-        request "/"
-        status = 200
-    if failed
-        port 53
-        protocol dns
+    then alert
     if failed
         port 25
         protocol smtp
@@ -317,6 +277,77 @@ check host cuatro-183 with address 192.168.0.183
     if failed
         port 22
         protocol ssh
+    then alert
+
+check host tres-182 with address 192.168.0.182
+   if failed
+        port 8080
+        protocol http
+        request "/"
+        status = 200
+    then alert
+    if failed
+        port 8024
+    then alert
+    if failed
+        port 8023
+    then alert
+    if failed
+        port 2812
+    then alert
+    if failed
+        port 80
+        protocol http
+        request "/"
+        status = 200
+    then alert
+    if failed
+        port 53
+        protocol dns
+    then alert
+    if failed
+        port 25
+        protocol smtp
+    then alert
+    if failed
+        port 22
+        protocol ssh
+    then alert
+
+check host cuatro-183 with address 192.168.0.183
+   if failed
+        port 8080
+        protocol http
+        request "/"
+        status = 200
+    then alert
+    if failed
+        port 8024
+    then alert
+    if failed
+        port 8023
+    then alert
+    if failed
+        port 2812
+    then alert
+    if failed
+        port 80
+        protocol http
+        request "/"
+        status = 200
+    then alert
+    if failed
+        port 53
+        protocol dns
+    then alert
+    if failed
+        port 25
+        protocol smtp
+    then alert
+    if failed
+        port 22
+        protocol ssh
+    then alert
 
 
 #check process apache with pidfile /usr/local/apache/logs/httpd.pid
