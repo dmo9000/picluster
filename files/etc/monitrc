@@ -177,7 +177,8 @@ check host picluster-190 with address 192.168.0.190
     if failed
         port 8080
         protocol http
-        status = 200
+        request "/"
+        status = 404 
     then alert
     if failed
         port 8024
@@ -191,6 +192,8 @@ check host picluster-190 with address 192.168.0.190
     if failed
         port 80
         protocol http
+        request "/"
+        status = 404
     then alert
     if failed
         port 53 
@@ -206,10 +209,11 @@ check host picluster-190 with address 192.168.0.190
     then alert
 
 check host uno-180 with address 192.168.0.180 
-    if failed
+   if failed
         port 8080
         protocol http
-        status = 200
+        request "/"
+        status = 404
     then alert
     if failed
         port 8024
@@ -223,13 +227,15 @@ check host uno-180 with address 192.168.0.180
     if failed
         port 80
         protocol http
+        request "/"
+        status = 404
     then alert
     if failed
         port 53
         protocol dns
     then alert
     if failed
-        port 25 
+        port 25
         protocol smtp
     then alert
     if failed
@@ -239,10 +245,11 @@ check host uno-180 with address 192.168.0.180
 
 
 check host dos-181 with address 192.168.0.181
-    if failed
+   if failed
         port 8080
         protocol http
-        status = 200
+        request "/"
+        status = 404
     then alert
     if failed
         port 8024
@@ -256,6 +263,8 @@ check host dos-181 with address 192.168.0.181
     if failed
         port 80
         protocol http
+        request "/"
+        status = 404
     then alert
     if failed
         port 53
@@ -271,10 +280,11 @@ check host dos-181 with address 192.168.0.181
     then alert
 
 check host tres-182 with address 192.168.0.182
-    if failed
+   if failed
         port 8080
         protocol http
-        status = 200
+        request "/"
+        status = 404
     then alert
     if failed
         port 8024
@@ -288,6 +298,8 @@ check host tres-182 with address 192.168.0.182
     if failed
         port 80
         protocol http
+        request "/"
+        status = 404
     then alert
     if failed
         port 53
@@ -303,10 +315,11 @@ check host tres-182 with address 192.168.0.182
     then alert
 
 check host cuatro-183 with address 192.168.0.183
-    if failed
+   if failed
         port 8080
         protocol http
-        status = 200
+        request "/"
+        status = 404
     then alert
     if failed
         port 8024
@@ -320,7 +333,8 @@ check host cuatro-183 with address 192.168.0.183
     if failed
         port 80
         protocol http
-        status = 200
+        request "/"
+        status = 404
     then alert
     if failed
         port 53
