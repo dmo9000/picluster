@@ -1,25 +1,25 @@
 ---
-- hosts: all 
-  remote_user: bootstrap 
-  gather_facts: yes 
+- hosts: all
+  remote_user: bootstrap
+  gather_facts: yes
 
   vars:
-    packages: { "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "bind-utils", "ccache", 
-                "fortune-mod", "frotz", "lrzsz", "ii", "epic", "BitchX", "mailx", "postfix", "net-snmp", "net-snmp-utils", "mlocate", "telnet", 
+    packages: { "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "bind-utils", "ccache",
+                "fortune-mod", "frotz", "lrzsz", "ii", "epic", "BitchX", "mailx", "postfix", "net-snmp", "net-snmp-utils", "mlocate", "telnet",
                 "postfix-perl-scripts", "rsyslog", "httpd", "openldap", "openldap-clients", "openldap-servers", "nodejs", "golang" }
 
 
   vars_prompt:
     - name: "ansible_password"
-      prompt: "Enter password for bootstrap user" 
+      prompt: "Enter password for bootstrap user"
       hidden: yes
 
   tasks:
-  - name: set hostname permanently 
+  - name: set hostname permanently
     shell: "/usr/bin/hostnamectl set-hostname {{ inventory_hostname }}"
     become: true
 
-  - name: display hostname 
+  - name: display hostname
     shell: /usr/bin/hostname -f
 
   - name: set selinux to permissive
@@ -42,25 +42,25 @@
       mode: 0o644
     become: true
     tags:
-      - network 
+      - network
 
-  - name: restart and enable rsyslog 
+  - name: restart and enable rsyslog
     service:
-      name: rsyslog 
+      name: rsyslog
       state: restarted
       enabled: yes
     become: true
     tags:
-      - rsyslog 
+      - rsyslog
 
   - name: restart NetworkManager to pickup resolver settings
     service:
-      name: NetworkManager 
+      name: NetworkManager
       state: restarted
       enabled: yes
     become: true
     tags:
-      - network 
+      - network
 
   - name: install /etc/hosts file
     copy:
@@ -68,7 +68,7 @@
       src: files/etc/hosts
       owner: root
       group: root
-      mode: 0o644 
+      mode: 0o644
     become: true
 
   - name: install /etc/dnf/dnf.conf file
@@ -77,11 +77,11 @@
       src: files/etc/dnf/dnf.conf
       owner: root
       group: root
-      mode: 0o644 
+      mode: 0o644
     become: true
 
   - name: install prerequisite packages
-    dnf: 
+    dnf:
       name: "{{ item }}"
       state: present
     with_items: "{{ packages }}"
@@ -90,7 +90,7 @@
       - installpackages
       - ntpd
 
-  - name: create /var/log/named 
+  - name: create /var/log/named
     file:
       dest: /var/log/named
       state: directory
@@ -99,9 +99,9 @@
       recurse: true
     become: true
     tags:
-      - named 
+      - named
 
-  - name: install /etc/named.conf 
+  - name: install /etc/named.conf
     template:
       dest: /etc/named.conf
       src: files/etc/named.conf
@@ -110,16 +110,16 @@
       mode: 0o644
     become: true
     tags:
-      - named 
+      - named
 
   - name: start & enable named
-    service: 
+    service:
       name: named
       state: restarted
       enabled: yes
     become: true
     tags:
-      - named 
+      - named
 
   - name: display named status
     shell: /bin/systemctl status named.service
@@ -127,16 +127,31 @@
     tags:
       - named
 
+  - name: start & enable httpd
+    service:
+      name: httpd
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - httpd
+
+  - name: display httpd status
+    shell: /bin/systemctl status httpd.service
+    become: true
+    tags:
+      - httpd
+
   - name: set timezone
     shell: timedatectl set-timezone Australia/Melbourne
     become: true
 
   - name: display timezone
-    shell: timedatectl 
+    shell: timedatectl
     become: true
 
   - name: start & enable ntpd
-    service: 
+    service:
       name: ntpd
       state: restarted
       enabled: yes
@@ -148,27 +163,27 @@
     shell: /usr/sbin/postconf -e relayhost=mail.optusnet.com.au
     become: true
     tags:
-      - postfix 
+      - postfix
 
   - name: start and enable postfix
-    service: 
+    service:
       name: postfix
       state: restarted
       enabled: yes
     become: true
     tags:
-      - postfix 
+      - postfix
 
   - name: remove ~/git-local/bbsd
     file:
-      dest: ~/git-local/bbsd 
-      state: absent     
+      dest: ~/git-local/bbsd
+      state: absent    
     tags:
       - bbsd
 
   - name: create ~/git-local/bbsd
     file:
-      dest: ~/git-local/bbsd 
+      dest: ~/git-local/bbsd
       state: directory
       recurse: true
     tags:
@@ -184,10 +199,10 @@
   - name: build bbsd sources
     shell: "(cd ~/git-local/bbsd &&  make clean && make)"
     tags:
-      - bbsd    
+      - bbsd   
 
   - name: stop bbsd prior to upgrade
-    service: 
+    service:
       name: bbsd
       state: stopped
       enabled: yes
@@ -196,11 +211,11 @@
       - bbsd
       - bbsd_stop
 
-  - name: install bbsd 
+  - name: install bbsd
     shell: "(cd /home/bootstrap/git-local/bbsd && make install)"
     become: true
     tags:
-      - bbsd    
+      - bbsd   
 
   - name: show installation
     shell: find /usr/local/bbsd
@@ -209,7 +224,7 @@
 
   - name: discover vrrp_priority
     set_fact:
-      vrrp_priority: "{{ ansible_eth0.ipv4.address.split('.')[3] }}" 
+      vrrp_priority: "{{ ansible_eth0.ipv4.address.split('.')[3] }}"
     tags:
       - keepalived
 
@@ -229,7 +244,7 @@
       - keepalived
 
   - name: start & enable keepalived
-    service: 
+    service:
       name: keepalived
       state: restarted
       enabled: yes
@@ -238,19 +253,19 @@
       - keepalived
 
   - name: display keepalived status
-    shell: /bin/systemctl status keepalived.service 
+    shell: /bin/systemctl status keepalived.service
     become: true
     tags:
       - keepalived
 
-  - name: display keepalived vip 
-    shell: /sbin/ip addr show  
+  - name: display keepalived vip
+    shell: /sbin/ip addr show 
     become: true
     tags:
       - keepalived
 
   - name: start & enable bbsd
-    service: 
+    service:
       name: bbsd
       state: restarted
       enabled: yes
@@ -285,7 +300,7 @@
       - haproxy
 
   - name: start & enable haproxy
-    service: 
+    service:
       name: haproxy
       state: restarted
       enabled: yes
@@ -300,10 +315,10 @@
       repo: 'https://github.com/dmo9000/z80core.git'
       dest: ~/git-local/z80core
     tags:
-      - oemsoftware    
+      - oemsoftware   
 
   - name: make OEM software available
     shell: cp /home/bootstrap/git-local/z80core/z80oem/*.arc /usr/local/bbsd/data/
     become: true
     tags:
-      - oemsoftware 
+      - oemsoftware
