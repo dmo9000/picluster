@@ -127,6 +127,16 @@
     tags:
       - named
 
+  - name: set Apache default port to 8080 
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^Listen [0-8]+$'
+      line: 'Listen 8080'
+    become: true
+    tags:
+      - httpd
+
+
   - name: start & enable httpd
     service:
       name: httpd
