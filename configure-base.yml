@@ -127,6 +127,17 @@
     tags:
       - named
 
+  - name: install /var/www/html/index.html file 
+    template:
+      dest: /var/www/html/index.html
+      src: content/index.html 
+      owner: nobody 
+      group: nobody
+      mode: 0o644
+    become: true
+    tags:
+      - httpd 
+
   - name: set Apache default port to 8080 
     lineinfile:
       path: /etc/httpd/conf/httpd.conf
