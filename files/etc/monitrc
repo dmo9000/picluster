@@ -17,7 +17,7 @@
 ## Start Monit in the background (run as a daemon):
 #
 set daemon 60              # check services at 30 seconds intervals
-   with start delay 60    # optional: delay the first check by 4-minutes (by 
+   with start delay 5    # optional: delay the first check by 4-minutes (by 
 #                           # default Monit check immediately after Monit start)
 #
 #
@@ -182,12 +182,14 @@ check host picluster-190 with address 192.168.0.190 every 1 cycles
     then alert
     if failed
         port 8024
+        with timeout 15 seconds for 3 times within 4 cycles
     then alert
     if failed
         port 23
     then alert
     if failed
         port 2812 
+        with timeout 15 seconds for 3 times within 4 cycles
     then alert
     if failed
         port 80

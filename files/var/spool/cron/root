@@ -1,0 +1,1 @@
+*/1 * * * *	monit summary 1>/usr/local/bbsd/data/monit.summary 2>/dev/null
