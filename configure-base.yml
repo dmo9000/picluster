@@ -26,13 +26,6 @@
     shell: /sbin/setenforce 0
     become: true
 
-  - name: set selinux to permissive
-    lineinfile:
-      path: /etc/sysconfig/selinux
-      regexp: '^SELINUX='
-      line: 'SELINUX=permissive'
-    become: true
-
   - name: install /etc/dhcp/dhclient.conf file
     template:
       dest: /etc/dhcp/dhclient.conf
@@ -151,6 +144,16 @@
       - installpackages
       - ntpd
 
+  # this doesn't work until the libselinux-python package is installed 
+
+  - name: set selinux to permissive
+    lineinfile:
+      path: /etc/sysconfig/selinux
+      regexp: '^SELINUX='
+      line: 'SELINUX=permissive'
+    become: true
+
+
   - name: stop & disable monit
     service:
       name: monit
@@ -159,6 +162,7 @@
     become: true
     tags:
       - monit
+      - monitstop
 
 
   - name: create /var/log/named
@@ -263,6 +267,38 @@
   - name: display timezone
     shell: timedatectl
     become: true
+
+  # Redhat considers this method deprecated. Look up what do to instead. 
+  # https://docs-old.fedoraproject.org/en-US/Fedora/26/html/System_Administrators_Guide/s1-Configure_ntpdate_Servers.html
+ 
+  - name: remove pool.fedora.org servers from ntpdate step-tickers 
+    lineinfile:
+      path: /etc/ntp/step-tickers
+      regexp: '^.*fedora.*$'
+      state: absent
+    become: true
+    tags:
+      - ntpd
+
+  - name: add mightymouse to ntpdate step-tickers 
+    lineinfile:
+      path: /etc/ntp/step-tickers
+      regexp: '^192\.168\.0\.100$'
+      line: "192.168.0.100"
+      state: present 
+    become: true
+    tags:
+      - ntpd
+
+
+  - name: start & enable ntpdate
+    service:
+      name: ntpdate
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - ntpd
 
   - name: start & enable ntpd
     service:
