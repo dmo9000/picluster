@@ -26,6 +26,33 @@
     shell: /sbin/setenforce 0
     become: true
 
+  - name: install libselinux-python package early
+    dnf:
+      name: libselinux-python 
+      state: present
+    become: true
+    tags:
+      - installpackages
+    
+
+  - name: install /etc/hosts file
+    copy:
+      dest: /etc/hosts
+      src: files/etc/hosts
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+
+  - name: install /etc/dnf/dnf.conf file
+    copy:
+      dest: /etc/dnf/dnf.conf
+      src: files/etc/dnf/dnf.conf
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+
   - name: install /etc/dhcp/dhclient.conf file
     template:
       dest: /etc/dhcp/dhclient.conf
@@ -36,15 +63,6 @@
     become: true
     tags:
       - network
-
-  - name: restart and enable rsyslog
-    service:
-      name: rsyslog
-      state: restarted
-      enabled: yes
-    become: true
-    tags:
-      - rsyslog
 
   - name: install sfdisk-mmcblk0 (partition layout) file
     template:
@@ -116,24 +134,6 @@
     tags:
       - network
 
-  - name: install /etc/hosts file
-    copy:
-      dest: /etc/hosts
-      src: files/etc/hosts
-      owner: root
-      group: root
-      mode: 0o644
-    become: true
-
-  - name: install /etc/dnf/dnf.conf file
-    copy:
-      dest: /etc/dnf/dnf.conf
-      src: files/etc/dnf/dnf.conf
-      owner: root
-      group: root
-      mode: 0o644
-    become: true
-
   - name: install prerequisite packages
     dnf:
       name: "{{ item }}"
@@ -144,12 +144,21 @@
       - installpackages
       - ntpd
 
+  - name: restart and enable rsyslog
+    service:
+      name: rsyslog
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - rsyslog
+
   # this doesn't work until the libselinux-python package is installed 
 
   - name: set selinux to permissive
     lineinfile:
       path: /etc/sysconfig/selinux
-      regexp: '^SELINUX='
+      regexp: '^SELINUX=.*$'
       line: 'SELINUX=permissive'
     become: true
 
@@ -492,12 +501,12 @@
     tags:
       - oemsoftware
 
-  - name: start & enable monit
-    service:
-      name: monit
-      state: restarted
-      enabled: yes
-    become: true
-    tags:
-      - monit
+#  - name: start & enable monit
+#    service:
+#      name: monit
+#      state: restarted
+#      enabled: yes
+#    become: true
+#    tags:
+#      - monit
 
