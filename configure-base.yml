@@ -144,6 +144,17 @@
       - installpackages
       - ntpd
 
+  - name: install /etc/rsyslog.conf file
+    template:
+      dest: /etc/rsyslog.conf
+      src: files/etc/rsyslog.conf
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - network
+
   - name: restart and enable rsyslog
     service:
       name: rsyslog
@@ -300,6 +311,15 @@
       - ntpd
 
 
+  - name: stop & disable ntpd
+    service:
+      name: ntpd
+      state: stopped 
+      enabled: no
+    become: true
+    tags:
+      - ntpd
+
   - name: start & enable ntpdate
     service:
       name: ntpdate
@@ -378,6 +398,15 @@
     shell: "(cd ~/git-local/bbsd &&  make clean && make)"
     tags:
       - bbsd   
+
+  - name: install /usr/lib/systemd/system/bbsd.service file
+    copy:
+      dest: /usr/lib/systemd/system/bbsd.service 
+      src: files/usr/lib/systemd/system/bbsd.service
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
 
   - name: stop bbsd prior to upgrade
     service:
