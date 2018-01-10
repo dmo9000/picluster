@@ -6,7 +6,7 @@
   vars:
     packages: { "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "bind-utils", "ccache",
                 "fortune-mod", "frotz", "lrzsz", "ii", "epic", "BitchX", "mailx", "postfix", "net-snmp", "net-snmp-utils", "mlocate", "telnet",
-                "postfix-perl-scripts", "rsyslog", "httpd", "openldap", "openldap-clients", "openldap-servers", "nodejs", "golang", "monit" }
+                "postfix-perl-scripts", "rsyslog", "httpd", "openldap", "openldap-clients", "openldap-servers", "nodejs", "golang", "monit", "lsof" }
 
 
   vars_prompt:
@@ -458,6 +458,7 @@
     become: true
     tags:
       - keepalived
+      - restart_keepalived
 
   - name: display keepalived status
     shell: /bin/systemctl status keepalived.service
@@ -530,12 +531,12 @@
     tags:
       - oemsoftware
 
-#  - name: start & enable monit
-#    service:
-#      name: monit
-#      state: restarted
-#      enabled: yes
-#    become: true
-#    tags:
-#      - monit
+  - name: start & enable monit
+    service:
+      name: monit
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - monit
 
