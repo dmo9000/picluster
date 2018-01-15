@@ -7,7 +7,7 @@
     packages: { "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "bind-utils", "ccache",
                 "fortune-mod", "frotz", "lrzsz", "ii", "epic", "BitchX", "mailx", "postfix", "net-snmp", "net-snmp-utils", "mlocate", "telnet",
                 "postfix-perl-scripts", "rsyslog", "httpd", "openldap", "openldap-clients", "openldap-servers", "nodejs", "golang", "monit", "lsof",
-                "rpm-build", "mc" }
+                "rpm-build", "mc", "python-dnf" }
 
 
   vars_prompt:
@@ -398,8 +398,8 @@
       - tdftool
       - bbsd
         
-  - name: Install package.
-    yum:
+  - name: Install tdftool RPM package
+    dnf:
       name: /root/tdftool-0.1-0.armv7hl.rpm
       state: present
     become: true
