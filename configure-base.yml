@@ -63,66 +63,66 @@
     tags:
       - network
 
-#  - name: install sfdisk-mmcblk0 (partition layout) file
-#    template:
-#      dest: /root/sfdisk-mmcblk0
-#      src: config/sfdisk-mmcblk0 
-#      owner: root
-#      group: root
-#      mode: 0o644
-#    become: true
-#    tags:
-#      - disk
+  - name: install sfdisk-mmcblk0 (partition layout) file
+    template:
+      dest: /root/sfdisk-mmcblk0
+      src: config/sfdisk-mmcblk0 
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - disk
 
-#  - name: check /dev/mmcblk0p2 size in sectors
-#    shell: "cat /sys/block/mmcblk0/mmcblk0p2/size"
-#    register: root_partition_size
-#    become: true
-#    tags: 
-#      - disk
+  - name: check /dev/mmcblk0p4 size in sectors
+    shell: "cat /sys/block/mmcblk0/mmcblk0p4/size"
+    register: root_partition_size
+    become: true
+    tags: 
+      - disk
 
-#  - debug: msg="root disk size in sectors is {{ root_partition_size.stdout }}"
-#    delegate_to: localhost
-#    become: true
-#    tags: 
-#      - disk
+  - debug: msg="root disk size in sectors is {{ root_partition_size.stdout }}"
+    delegate_to: localhost
+    become: true
+    tags: 
+      - disk
 
-#  - debug: msg="Root disk does not need resizing"
-#    when: root_partition_size.stdout == '15022080'
-#    delegate_to: localhost
-#    become: true
-#    tags: 
-#      - disk
+  - debug: msg="Root disk does not need resizing"
+    when: root_partition_size.stdout == '60991488'
+    delegate_to: localhost
+    become: true
+    tags: 
+      - disk
 
-#  - debug: msg="Root disk needs resizing"
-#    when: root_partition_size.stdout != '15022080'
-#    delegate_to: localhost
-#    become: true
-#    tags: 
-#      - disk
+  - debug: msg="Root disk needs resizing"
+    when: root_partition_size.stdout != '60991488'
+    delegate_to: localhost
+    become: true
+    tags: 
+      - disk
 
   # live dangerously!
 
-#  - name: resize root partition to 15022080 sectors
-#    shell: "/usr/sbin/sfdisk --force /dev/mmcblk0 < /root/sfdisk-mmcblk0"
-#    when: root_partition_size.stdout != '15022080'
-#    become: true
-#    tags: 
-#      - disk
+  - name: resize root partition to 60991488 sectors
+    shell: "/usr/sbin/sfdisk --force /dev/mmcblk0 < /root/sfdisk-mmcblk0"
+    when: root_partition_size.stdout != '60991488'
+    become: true
+    tags: 
+      - disk
 
-#  - name: probe new partition layout 
-#    shell: "/usr/sbin/partprobe /dev/mmcblk0"
-#    when: root_partition_size.stdout != '15022080'
-#    become: true
-#    tags: 
-#      - disk
+  - name: probe new partition layout 
+    shell: "/usr/sbin/partprobe /dev/mmcblk0"
+    when: root_partition_size.stdout != '60991488'
+    become: true
+    tags: 
+      - disk
 
-#  - name: expand root filesystem  
-#    shell: "/usr/sbin/resize2fs /dev/mmcblk0p2"
-#    when: root_partition_size.stdout != '15022080'
-#    become: true
-#    tags: 
-#      - disk
+  - name: expand root filesystem  
+    shell: "/usr/sbin/resize2fs /dev/mmcblk0p4"
+    when: root_partition_size.stdout != '60991488'
+    become: true
+    tags: 
+      - disk
 
   - name: restart NetworkManager to pickup resolver settings
     service:
