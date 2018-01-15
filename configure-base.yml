@@ -389,6 +389,25 @@
     tags:
       - postfix
 
+  - name: Copy tdftool rpm file to server
+    copy:
+      src: rpms/tdftool-0.1-0.armv7hl.rpm 
+      dest: /root/tdftool-0.1-0.armv7hl.rpm
+    become: true
+    tags:
+      - tdftool
+      - bbsd
+        
+  - name: Install package.
+    yum:
+      name: /root/tdftool-0.1-0.armv7hl.rpm
+      state: present
+    become: true
+    tags:
+      - tdftool
+      - bbsd
+
+
   - name: remove ~/git-local/bbsd
     file:
       dest: ~/git-local/bbsd
