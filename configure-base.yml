@@ -6,7 +6,8 @@
   vars:
     packages: { "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "bind-utils", "ccache",
                 "fortune-mod", "frotz", "lrzsz", "ii", "epic", "BitchX", "mailx", "postfix", "net-snmp", "net-snmp-utils", "mlocate", "telnet",
-                "postfix-perl-scripts", "rsyslog", "httpd", "openldap", "openldap-clients", "openldap-servers", "nodejs", "golang", "monit", "lsof" }
+                "postfix-perl-scripts", "rsyslog", "httpd", "openldap", "openldap-clients", "openldap-servers", "nodejs", "golang", "monit", "lsof",
+                "rpm-build", "mc" }
 
 
   vars_prompt:
@@ -132,6 +133,24 @@
     become: true
     tags:
       - network
+
+  - name: install iptables-rules file
+    template:
+      dest: /root/iptables-rules
+      src: config/iptables-rules
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - iptables 
+
+  - name: configure iptables 
+    shell: "/usr/sbin/iptables-restore < /root/iptables-rules"
+    become: true
+    tags:
+      - iptables 
+
 
   - name: install prerequisite packages
     dnf:
@@ -349,7 +368,7 @@
       - postfix
 
   - name: set mynetworks for postfix
-    shell: /usr/sbin/postconf -e mynetworks=192.168.0.0/24
+    shell: /usr/sbin/postconf -e mynetworks=192.168.0.0/24,127.0.0.1
     become: true
     tags:
       - postfix
