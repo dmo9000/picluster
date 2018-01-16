@@ -137,32 +137,6 @@
     tags:
       - network
 
-#  - name: install iptables-rules file
-#    template:
-#      dest: /root/iptables-rules
-#      src: config/iptables-rules
-#      owner: root
-#      group: root
-#      mode: 0o644
-#    become: true
-#    tags:
-#      - iptables 
-
-#  - name: configure iptables 
-#    shell: "/usr/sbin/iptables-restore < /root/iptables-rules"
-#    become: true
-#    tags:
-#      - iptables 
-
-  # again, fuck systemd, this is a joke
-#  - name: save firewalld rules
-#    shell: /usr/bin/firewall-cmd --runtime-to-permanent
-#    become: true
-#    tags:
-#      - iptables 
-#      - firewalld
-
-
   - name: install prerequisite packages
     dnf:
       name: "{{ item }}"
@@ -213,7 +187,14 @@
     tags:
       - firewall
 
-        
+  - firewalld:
+      port: 8024/tcp
+      permanent: true
+      state: enabled
+      immediate: true
+    become: true
+    tags:
+      - firewall
 
 
 #  - name: stop & disable monit

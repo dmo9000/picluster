@@ -10,6 +10,6 @@
 
   tasks:
   - name: reboot nodes
-    shell: /sbin/init 6 
+    shell: /sbin/init 6  
     become: true
 
