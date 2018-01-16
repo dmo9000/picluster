@@ -7,7 +7,7 @@
     packages: { "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "bind-utils", "ccache",
                 "fortune-mod", "frotz", "lrzsz", "ii", "epic", "BitchX", "mailx", "postfix", "net-snmp", "net-snmp-utils", "mlocate", "telnet",
                 "postfix-perl-scripts", "rsyslog", "httpd", "openldap", "openldap-clients", "openldap-servers", "nodejs", "golang", "monit", "lsof",
-                "rpm-build", "mc", "python-dnf" }
+                "rpm-build", "mc", "python-dnf", "selinux-policy", "setools-console", "policycoreutils-python-utils", "policycoreutils-devel", "python3-firewall", "python-firewall" }
 
 
   vars_prompt:
@@ -26,7 +26,9 @@
   - name: set selinux to permissive
     shell: /sbin/setenforce 0
     become: true
-
+    tags:
+      - selinux
+        
   - name: install libselinux-python package early
     dnf:
       name: libselinux-python 
@@ -34,6 +36,7 @@
     become: true
     tags:
       - installpackages
+      - selinux
 
   - name: install /etc/hosts file
     copy:
@@ -134,22 +137,30 @@
     tags:
       - network
 
-  - name: install iptables-rules file
-    template:
-      dest: /root/iptables-rules
-      src: config/iptables-rules
-      owner: root
-      group: root
-      mode: 0o644
-    become: true
-    tags:
-      - iptables 
+#  - name: install iptables-rules file
+#    template:
+#      dest: /root/iptables-rules
+#      src: config/iptables-rules
+#      owner: root
+#      group: root
+#      mode: 0o644
+#    become: true
+#    tags:
+#      - iptables 
 
-  - name: configure iptables 
-    shell: "/usr/sbin/iptables-restore < /root/iptables-rules"
-    become: true
-    tags:
-      - iptables 
+#  - name: configure iptables 
+#    shell: "/usr/sbin/iptables-restore < /root/iptables-rules"
+#    become: true
+#    tags:
+#      - iptables 
+
+  # again, fuck systemd, this is a joke
+#  - name: save firewalld rules
+#    shell: /usr/bin/firewall-cmd --runtime-to-permanent
+#    become: true
+#    tags:
+#      - iptables 
+#      - firewalld
 
 
   - name: install prerequisite packages
@@ -184,12 +195,26 @@
 
   # this doesn't work until the libselinux-python package is installed 
 
-  - name: set selinux to permissive
+  - name: set selinux to disabled 
     lineinfile:
       path: /etc/sysconfig/selinux
       regexp: '^SELINUX=.*$'
-      line: 'SELINUX=permissive'
+      line: 'SELINUX=disabled'
     become: true
+    tags:
+      - selinux
+
+  - firewalld:
+      port: 23/tcp
+      permanent: true
+      state: enabled
+      immediate: true
+    become: true
+    tags:
+      - firewall
+
+        
+
 
 #  - name: stop & disable monit
 #    service:
@@ -396,7 +421,6 @@
     become: true
     tags:
       - tdftool
-      - bbsd
         
   - name: Install tdftool RPM package
     dnf:
@@ -405,7 +429,6 @@
     become: true
     tags:
       - tdftool
-      - bbsd
 
 
   - name: remove ~/git-local/bbsd

@@ -9,7 +9,7 @@
       hidden: yes
 
   tasks:
-  - name: reboot nodes
-    shell: /sbin/init 6 
+  - name: show haproxy status 
+    shell: service haproxy status
     become: true
 

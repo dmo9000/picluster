@@ -1,0 +1,57 @@
+
+Fedora/Redhat have become a bit of a systemd/auditd/selinux clusterfuck lately. While 
+I appreciate the usefulness, the documentation is lengthy, and horrendous. 
+
+SElinux is not allowing haproxy to connect to arbitrary remote ports. I guess that's
+handy, but we need to tell it is allowed to connect to our various TCP services
+that aren't plain HTTP. In this example we will talk about bbsd, which is a telnet
+style service.
+
+Note: you will need
+
+    setools-console
+    policycoreutils-python-utils
+    policycoreutils-devel
+
+to fix this crap. 
+
+Start here for some fun reading: 
+
+    https://unix.stackexchange.com/questions/363878/which-selinux-policies-apply-to-haproxy
+
+sesearch -ds -A -s haproxy_t -p "name_connect"
+
+It gets funnier. 
+
+    https://www.certdepot.net/rhel7-use-selinux-port-labelling/
+
+semanage port -l | grep 8024
+
+--
+
+sepolicy network -p 8024
+
+Will show something like: 
+
+    8024: tcp unreserved_port_t 1024-32767
+    8024: udp unreserved_port_t 1024-32767
+
+Ok then:
+
+    [root@uno ~]# semanage port -l | grep telnet
+    telnetd_port_t                 tcp      23
+    [root@uno ~]# 
+
+Great! bbsd is a telnet service.
+
+    semanage port -a -t telnetd_port_t -p tcp 8024
+    semanage port -l | grep telnet
+    telnetd_port_t                 tcp      8024, 23
+
+Ok, now we are finally getting somewhere. Although it looks like we'd need to recompile
+the whole haproxy_selinux module to add support for telnetd_port_t.
+
+Fuck it:
+
+setsebool -P haproxy_connect_any 1
+

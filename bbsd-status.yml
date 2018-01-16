@@ -9,7 +9,7 @@
       hidden: yes
 
   tasks:
-  - name: reboot nodes
-    shell: /sbin/init 6 
+  - name: show bbsd status 
+    shell: service bbsd status
     become: true
 
