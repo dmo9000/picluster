@@ -1,0 +1,15 @@
+---
+- hosts: all 
+  remote_user: bootstrap 
+  gather_facts: no 
+
+  vars_prompt:
+    - name: "ansible_password"
+      prompt: "Enter password for bootstrap user" 
+      hidden: yes
+
+  tasks:
+  - name: upgrade kernel 
+    shell: dnf -y upgrade kernel kernel-core kernel-modules 
+    become: true
+
