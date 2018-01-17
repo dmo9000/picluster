@@ -379,13 +379,6 @@
     tags:
       - postfix
 
-#  # WARNING: do not do this for production or you will lose all mail!
-#  - name: set mail relay host for postfix
-#    shell: /usr/sbin/postsuper -d ALL
-#    become: true
-#    tags:
-#      - postfix
-
   - name: start and enable postfix
     service:
       name: postfix
@@ -395,22 +388,38 @@
     tags:
       - postfix
 
-  - name: Copy tdftool rpm file to server
-    copy:
-      src: rpms/tdftool-0.1-0.armv7hl.rpm 
-      dest: /root/tdftool-0.1-0.armv7hl.rpm
-    become: true
-    tags:
-      - tdftool
-        
-  - name: Install tdftool RPM package
-    dnf:
-      name: /root/tdftool-0.1-0.armv7hl.rpm
-      state: present
-    become: true
+  - name: remove ~/git-local/tdftool
+    file:
+      dest: ~/git-local/tdftool
+      state: absent
     tags:
       - tdftool
 
+  - name: create ~/git-local/tdftool
+    file:
+      dest: ~/git-local/tdftool
+      state: directory
+      recurse: true
+    tags:
+      - tdftool
+
+  - name: checkout tdftool sources to ~/git-local/tdftool
+    git:
+      repo: 'https://github.com/dmo9000/tdftool.git'
+      dest: ~/git-local/tdftool
+    tags:
+      - tdftool
+
+  - name: build tdftool sources
+    shell: "(cd ~/git-local/tdftool &&  make clean && make)"
+    tags:
+      - tdftool
+
+  - name: install tdftool 
+    shell: "(cd /home/bootstrap/git-local/tdftool && make install)"
+    become: true
+    tags:
+      - tdftool
 
   - name: remove ~/git-local/bbsd
     file:
