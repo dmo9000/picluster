@@ -576,13 +576,13 @@
 
   - name: refresh OEM software
     git:
-      repo: 'https://github.com/dmo9000/z80core.git'
-      dest: ~/git-local/z80core
+      repo: 'https://github.com/dmo9000/z80oem.git'
+      dest: ~/git-local/z80oem
     tags:
       - oemsoftware   
 
   - name: make OEM software available
-    shell: cp /home/bootstrap/git-local/z80core/z80oem/*.arc /usr/local/bbsd/data/
+    shell: cp /home/bootstrap/git-local/z80oem/*.arc /usr/local/bbsd/data/
     become: true
     tags:
       - oemsoftware
