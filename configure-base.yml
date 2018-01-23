@@ -7,7 +7,10 @@
     packages: { "tcpdump", "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "bind-utils", "ccache",
                 "fortune-mod", "frotz", "lrzsz", "ii", "epic", "BitchX", "mailx", "postfix", "net-snmp", "net-snmp-utils", "mlocate", "telnet",
                 "postfix-perl-scripts", "rsyslog", "httpd", "openldap", "openldap-clients", "openldap-servers", "nodejs", "golang", "monit", "lsof",
-                "rpm-build", "mc", "python-dnf", "selinux-policy", "setools-console", "policycoreutils-python-utils", "policycoreutils-devel", "python3-firewall", "python-firewall", "kernel", "kernel-core", "kernel-modules" }
+                "rpm-build", "mc", "python-dnf", "selinux-policy", "setools-console", "policycoreutils-python-utils", "policycoreutils-devel", "python3-firewall", 
+                "python-firewall", "kernel", "kernel-core", "kernel-modules" }
+
+    firewall_ports: { "23/tcp", "25/tcp", "53/udp", "53/tcp", "80/tcp", "2812/tcp", "8024/tcp", "8080/tcp" } 
 
 
   vars_prompt:
@@ -192,41 +195,14 @@
       - selinux
 
   - firewalld:
-      port: 23/tcp
+      port: "{{ item }}" 
       permanent: true
       state: enabled
       immediate: true
+    with_items: "{{ firewall_ports }}" 
     become: true
     tags:
       - firewall
-
-  - firewalld:
-      port: 80/tcp
-      permanent: true
-      state: enabled
-      immediate: true
-    become: true
-    tags:
-      - firewall
-
-  - firewalld:
-      port: 2812/tcp
-      permanent: true
-      state: enabled
-      immediate: true
-    become: true
-    tags:
-      - firewall
-
-  - firewalld:
-      port: 8024/tcp
-      permanent: true
-      state: enabled
-      immediate: true
-    become: true
-    tags:
-      - firewall
-
 
   - name: stop & disable monit
     service:
