@@ -201,6 +201,24 @@
       - firewall
 
   - firewalld:
+      port: 80/tcp
+      permanent: true
+      state: enabled
+      immediate: true
+    become: true
+    tags:
+      - firewall
+
+  - firewalld:
+      port: 2812/tcp
+      permanent: true
+      state: enabled
+      immediate: true
+    become: true
+    tags:
+      - firewall
+
+  - firewalld:
       port: 8024/tcp
       permanent: true
       state: enabled
@@ -210,15 +228,15 @@
       - firewall
 
 
-#  - name: stop & disable monit
-#    service:
-#      name: monit
-#      state: stopped 
-#      enabled: no 
-#    become: true
-#    tags:
-#      - monit
-#      - monitstop
+  - name: stop & disable monit
+    service:
+      name: monit
+      state: stopped 
+      enabled: no 
+    become: true
+    tags:
+      - monit
+      - monitstop
 
 
   - name: create /var/log/named
@@ -279,27 +297,27 @@
     tags:
       - httpd
 
-#  - name: install monitrc 
-#    template:
-#      dest: /etc/monitrc
-#      src: "files/etc/monitrc"
-#      owner: root
-#      group: root
-#      mode: 0o700
-#    become: true
-#    tags:
-#      - monit 
+  - name: install monitrc 
+    template:
+      dest: /etc/monitrc
+      src: "files/etc/monitrc"
+      owner: root
+      group: root
+      mode: 0o700
+    become: true
+    tags:
+      - monit 
 
-#  - name: install monit cron job
-#    template:
-#      dest: /var/spool/cron/root
-#      src: "files/var/spool/cron/root"
-#      owner: root
-#      group: root
-#      mode: 0o600
-#    become: true
-#    tags:
-#      - monit
+  - name: install monit cron job
+    template:
+      dest: /var/spool/cron/root
+      src: "files/var/spool/cron/root"
+      owner: root
+      group: root
+      mode: 0o600
+    become: true
+    tags:
+      - monit
 
   - name: start & enable httpd 
     service:
@@ -593,12 +611,12 @@
     tags:
       - oemsoftware
 
-#  - name: start & enable monit
-#    service:
-#      name: monit
-#      state: restarted
-#      enabled: yes
-#    become: true
-#    tags:
-#      - monit
+  - name: start & enable monit
+    service:
+      name: monit
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - monit
 
