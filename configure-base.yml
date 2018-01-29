@@ -455,14 +455,14 @@
     tags:
       - bbsd   
 
-  - name: install /usr/lib/systemd/system/bbsd.service file
-    copy:
-      dest: /usr/lib/systemd/system/bbsd.service 
-      src: files/usr/lib/systemd/system/bbsd.service
-      owner: root
-      group: root
-      mode: 0o644
-    become: true
+#  - name: install /usr/lib/systemd/system/bbsd.service file
+#    copy:
+#      dest: /usr/lib/systemd/system/bbsd.service 
+#      src: files/usr/lib/systemd/system/bbsd.service
+#      owner: root
+#      group: root
+#      mode: 0o644
+#    become: true
 
   - name: stop bbsd prior to upgrade
     service:
