@@ -175,16 +175,6 @@ set httpd port 2812 and
 
 check host picluster-190 with address 192.168.0.190 every 1 cycles
     if failed
-        port 8080
-        protocol http
-        request "/"
-        status = 200 
-    then alert
-    if failed
-        port 8024
-        with timeout 15 seconds for 3 times within 4 cycles
-    then alert
-    if failed
         port 23
     then alert
     if failed
@@ -204,10 +194,6 @@ check host picluster-190 with address 192.168.0.190 every 1 cycles
     if failed
         port 25
         protocol smtp
-    then alert
-    if failed
-        port 22
-        protocol ssh
     then alert
 
 check host uno-180 with address 192.168.0.180 
