@@ -562,6 +562,7 @@
     become: true
     tags:
       - bbsd
+      - named
 
   - name: show bbsd service status
     shell: systemctl status bbsd
