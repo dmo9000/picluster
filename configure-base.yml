@@ -214,6 +214,23 @@
       - monit
       - monitstop
 
+  - name: display named status
+    shell: /bin/systemctl enable NetworkManager-wait-online.service
+    become: true
+    tags:
+      - named
+      - networkmanager-wait-online
+
+  - name: install /usr/lib/systemd/system/named.service file
+    copy:
+      dest: /usr/lib/systemd/system/named.service
+      src: files/usr/lib/systemd/system/named.service
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - named
 
   - name: create /var/log/named
     file:
