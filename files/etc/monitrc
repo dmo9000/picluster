@@ -171,6 +171,40 @@ set httpd port 2812 and
 ## problem remains, it is possible to disable monitoring using the TIMEOUT
 ## statement. This service depends on another service (apache_bin) which
 ## is defined above.
+#
+
+## Local service checks
+#
+
+
+check program sshd-service with path "/usr/local/bin/monit-sshd-check.sh"
+with timeout 30 seconds
+if status = 3 then alert
+
+check program postfix-service with path "/usr/local/bin/monit-postfix-check.sh"
+with timeout 30 seconds
+if status = 3 then alert
+
+check program named-service with path "/usr/local/bin/monit-named-check.sh"
+with timeout 30 seconds
+if status = 3 then alert
+
+check program httpd-service with path "/usr/local/bin/monit-httpd-check.sh"
+with timeout 30 seconds
+if status = 3 then alert
+
+check program docker-service with path "/usr/local/bin/monit-docker-check.sh"
+with timeout 30 seconds
+if status = 3 then alert
+
+check program bbsd-service with path "/usr/local/bin/monit-bbsd-check.sh"
+with timeout 30 seconds
+if status = 3 then alert
+
+check program haproxy-service with path "/usr/local/bin/monit-haproxy-check.sh"
+with timeout 30 seconds
+if status = 3 then alert
+
 
 
 check host picluster-190 with address 192.168.0.190 every 1 cycles
@@ -240,7 +274,6 @@ check host dos-181 with address 192.168.0.181
         protocol ssh
     with timeout 15 seconds for 3 times within 4 cycles
     then alert
-
 
 
 check host tres-182 with address 192.168.0.182

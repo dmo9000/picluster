@@ -7,3 +7,32 @@
       - installpackages
       - docker
 
+  - name: install monit-docker-check.sh
+    file:
+      dest: /usr/local/bin/monit-docker-check.sh
+      state: absent
+    become: true
+    tags:
+      - docker
+      - monit
+
+  - name: install /usr/lib/systemd/system/docker.service file
+    copy:
+      dest: /usr/lib/systemd/system/docker.service
+      src: files/usr/lib/systemd/system/docker.service
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - named      
+
+  - name: start & enable docker on boot
+    systemd:
+      name: docker
+      state: started
+      enabled: yes
+      daemon_reload: yes
+    become: true
+    tags:
+      - docker      

@@ -12,6 +12,7 @@
 
     firewall_ports: { "23/tcp", "25/tcp", "53/udp", "53/tcp", "80/tcp", "2812/tcp", "8024/tcp", "8080/tcp" } 
 
+    monit_local: { "sshd", "postfix", "named", "haproxy", "bbsd, "httpd" }
 
   vars_prompt:
     - name: "ansible_password"
@@ -147,7 +148,7 @@
       - disk
 
   - name: restart NetworkManager to pickup resolver settings
-    service:
+    systemd:
       name: NetworkManager
       state: restarted
       enabled: yes
@@ -177,7 +178,7 @@
       - network
 
   - name: restart and enable rsyslog
-    service:
+    systemd:
       name: rsyslog
       state: restarted
       enabled: yes
@@ -207,7 +208,7 @@
       - firewall
 
   - name: stop & disable monit
-    service:
+    systemd:
       name: monit
       state: stopped 
       enabled: no 
@@ -216,12 +217,27 @@
       - monit
       - monitstop
 
-  - name: display named status
-    shell: /bin/systemctl enable NetworkManager-wait-online.service
+  - name: install monit-generic-check.sh
+    file:
+      dest: /usr/local/bin/monit-{{ item }}-check.sh
+      src: files/usr/local/bin/monit-generic-check.sh
+    with_items: "{{ monit_local }}"
+    become: true
+    tags:
+      - monit
+
+  - name: enable NetworkManager-wait-online.service
+    systemd:
+      name: NetworkManager-wait-online
+      enabled: yes
+      state: restarted
     become: true
     tags:
       - named
       - networkmanager-wait-online
+
+
+  # NOTE: apparently we can do this with a systemd "drop-in". Research.
 
   - name: install /usr/lib/systemd/system/named.service file
     copy:
@@ -257,13 +273,16 @@
       - named
 
   - name: start & enable named
-    service:
+    systemd:
       name: named
       state: restarted
       enabled: yes
+      daemon_reload: yes
     become: true
     tags:
       - named
+
+  # wow. amazed that ansible::systemd doesn't support this yet. Some replacement for SysV init...
 
   - name: display named status
     shell: /bin/systemctl status named.service
@@ -315,7 +334,7 @@
       - monit
 
   - name: start & enable httpd 
-    service:
+    systemd:
       name: httpd
       state: restarted
       enabled: yes
@@ -336,57 +355,7 @@
   - name: display timezone
     shell: timedatectl
     become: true
-
-  # Redhat considers this method deprecated. Look up what do to instead. 
-  # https://docs-old.fedoraproject.org/en-US/Fedora/26/html/System_Administrators_Guide/s1-Configure_ntpdate_Servers.html
  
-#  - name: remove pool.fedora.org servers from ntpdate step-tickers 
-#    lineinfile:
-#      path: /etc/ntp/step-tickers
-#      regexp: '^.*fedora.*$'
-#      state: absent
-#    become: true
-#    tags:
-#      - ntpd
-
-#  - name: add mightymouse to ntpdate step-tickers 
-#    lineinfile:
-#      path: /etc/ntp/step-tickers
-#      regexp: '^192\.168\.0\.100$'
-#      line: "192.168.0.100"
-#      state: present 
-#    become: true
-#    tags:
-#      - ntpd
-
-
-#  - name: stop & disable ntpd
-#    service:
-#      name: ntpd
-#      state: stopped 
-#      enabled: no
-#    become: true
-#    tags:
-#      - ntpd
-
-#  - name: start & enable ntpdate
-#    service:
-#      name: ntpdate
-#      state: restarted
-#      enabled: yes
-#    become: true
-#    tags:
-#      - ntpd
-
-#  - name: start & enable ntpd
-#    service:
-#      name: ntpd
-#      state: restarted
-#      enabled: yes
-#    become: true
-#    tags:
-#      - ntpd
-
   - name: set mail relay host for postfix
     shell: /usr/sbin/postconf -e relayhost=mail.optusnet.com.au
     become: true
@@ -406,7 +375,7 @@
       - postfix
 
   - name: start and enable postfix
-    service:
+    systemd:
       name: postfix
       state: restarted
       enabled: yes
@@ -486,7 +455,7 @@
       - bbsd
 
   - name: stop bbsd prior to upgrade
-    service:
+    systemd:
       name: bbsd
       state: stopped
       enabled: yes
@@ -528,7 +497,7 @@
       - keepalived
 
   - name: start & enable keepalived
-    service:
+    systemd:
       name: keepalived
       state: restarted
       enabled: yes
@@ -550,21 +519,15 @@
       - keepalived
 
   - name: start & enable bbsd
-    service:
+    systemd:
       name: bbsd
       state: restarted
       enabled: yes
+      daemon_reload: yes
     become: true
     tags:
       - bbsd
       - bbsd_restart
-
-  - name: systemctl daemon-reload
-    shell: /usr/bin/systemctl daemon-reload
-    become: true
-    tags:
-      - bbsd
-      - named
 
   - name: show bbsd service status
     shell: systemctl status bbsd
@@ -586,7 +549,7 @@
       - haproxy
 
   - name: start & enable haproxy
-    service:
+    systemd:
       name: haproxy
       state: restarted
       enabled: yes
@@ -610,7 +573,7 @@
       - oemsoftware
 
   - name: start & enable monit
-    service:
+    systemd:
       name: monit
       state: restarted
       enabled: yes
