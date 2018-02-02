@@ -11,6 +11,10 @@ check host {{ item }}-alt with address {{ item }}
         with timeout 15 seconds for 3 times within 4 cycles
     then alert
     if failed
+        port 2375
+        with timeout 15 seconds for 3 times within 4 cycles
+    then alert
+    if failed
         port 53
         protocol dns
     then alert
@@ -18,10 +22,6 @@ check host {{ item }}-alt with address {{ item }}
         port 22
         protocol ssh
     with timeout 15 seconds for 3 times within 4 cycles
-    then alert
-    if failed
-        port 2375
-        protocol http 
     then alert
 
 

@@ -9,6 +9,11 @@
       hidden: yes
 
   tasks:
+
+  - name: save pmain pid
+    shell: pgrep pmain
+    register: pmain_pid
+
   - name: pstree bootstrap 
-    shell: pstree bootstrap
+    shell: "pstree -g -p -G {{ pmain_pid.stdout }}" 
 

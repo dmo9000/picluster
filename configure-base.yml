@@ -10,7 +10,7 @@
                 "rpm-build", "mc", "python-dnf", "selinux-policy", "setools-console", "policycoreutils-python-utils", "policycoreutils-devel", "python3-firewall", 
                 "python-firewall", "kernel", "kernel-core", "kernel-modules" }
 
-    firewall_ports: { "23/tcp", "25/tcp", "53/udp", "53/tcp", "80/tcp", "2812/tcp", "8024/tcp", "8080/tcp" } 
+    firewall_ports: { "23/tcp", "25/tcp", "53/udp", "53/tcp", "80/tcp", "2375/tcp", "2812/tcp", "8024/tcp", "8080/tcp" } 
 
     monit_local: { "sshd", "postfix", "named", "haproxy", "bbsd", "docker", "httpd" }
 
@@ -229,7 +229,7 @@
 
 
   - name: install /etc/monit.d/ local services checks 
-    file:
+    template:
       dest: /etc/monit.d/local-service-{{ item }}
       src: files/etc/monit.d/local-service-template
       owner: root
@@ -242,7 +242,7 @@
 
 
   - name: install /etc/monit.d/ remote services checks 
-    file:
+    template:
       dest: /etc/monit.d/remote-host-{{ item }}
       src: files/etc/monit.d/remote-host-template
       owner: root
@@ -620,3 +620,12 @@
     tags:
       - monit
 
+  # LOL apparently the builtin ansible support for this doesn't work
+
+  - name: systemd daemon reload
+    shell: /bin/systemctl daemon-reload
+    become: true
+    tags:
+      - docker
+      - named
+      - bbsd

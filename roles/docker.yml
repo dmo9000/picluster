@@ -7,8 +7,6 @@
       - installpackages
       - docker
 
-
-
   - name: install /usr/lib/systemd/system/docker.service file
     copy:
       dest: /usr/lib/systemd/system/docker.service
@@ -18,12 +16,20 @@
       mode: 0o644
     become: true
     tags:
-      - named      
+      - docker      
+
+  # LOL @ systemd
+
+#  - name: systemd daemon reload
+#    shell: /bin/systemctl daemon-reload
+#    become: true
+#    tags:
+#      - docker
 
   - name: start & enable docker on boot
     systemd:
       name: docker
-      state: started
+      state: restarted
       enabled: yes
       daemon_reload: yes
     become: true
