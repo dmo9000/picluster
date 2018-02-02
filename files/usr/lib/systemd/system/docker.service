@@ -27,8 +27,8 @@ ExecStart=/usr/bin/dockerd-current \
           $ADD_REGISTRY \
           $BLOCK_REGISTRY \
           $INSECURE_REGISTRY \
-	  $REGISTRIES	\
-	  -H=tcp://0.0.0.0:2375
+    	  $REGISTRIES	\
+	      -H=tcp://0.0.0.0:2375 -H=unix:///var/run/docker.sock
 
 ExecReload=/bin/kill -s HUP $MAINPID
 TasksMax=8192
