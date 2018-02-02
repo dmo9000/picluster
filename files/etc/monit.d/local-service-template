@@ -1,0 +1,4 @@
+check program {{ item }}-service with path "/usr/local/bin/monit-{{ item }}-check.sh"
+with timeout 60 seconds
+if status = 3 then alert
+

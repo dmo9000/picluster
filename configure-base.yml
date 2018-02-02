@@ -217,7 +217,6 @@
       - monit
       - monitstop
 
-
   - name: remove /etc/monit.d/logging
     file:
       dest: /etc/monit.d/logging
@@ -228,7 +227,19 @@
 
   - name: install monit-generic-check.sh
     template:
-      dest: /usr/local/bin/monit-{{ item }}-check.sh
+      dest: /etc/monit.d/local-service-{{ item }}
+      src: files/etc/monit.d/local-service-template
+      owner: root
+      group: root
+      mode: 0o644
+    with_items: "{{ monit_local }}"
+    become: true
+    tags:
+      - monit
+
+  - name: install /etc/monit.d/services checks 
+    template:
+      dest: /etc/monit.d/{{ item }}-check.sh
       src: files/usr/local/bin/monit-generic-check.sh
       owner: root
       group: root
@@ -236,7 +247,7 @@
     with_items: "{{ monit_local }}"
     become: true
     tags:
-      - monit
+      - monit    
 
   - name: enable NetworkManager-wait-online.service
     systemd:
