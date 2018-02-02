@@ -12,7 +12,7 @@
 
     firewall_ports: { "23/tcp", "25/tcp", "53/udp", "53/tcp", "80/tcp", "2812/tcp", "8024/tcp", "8080/tcp" } 
 
-    monit_local: { "sshd", "postfix", "named", "haproxy", "bbsd, "httpd" }
+    monit_local: { "sshd", "postfix", "named", "haproxy", "bbsd", "docker", "httpd" }
 
   vars_prompt:
     - name: "ansible_password"
@@ -217,10 +217,22 @@
       - monit
       - monitstop
 
-  - name: install monit-generic-check.sh
+
+  - name: remove /etc/monit.d/logging
     file:
+      dest: /etc/monit.d/logging
+      state: absent
+    become: true
+    tags:
+      - monit
+
+  - name: install monit-generic-check.sh
+    template:
       dest: /usr/local/bin/monit-{{ item }}-check.sh
       src: files/usr/local/bin/monit-generic-check.sh
+      owner: root
+      group: root
+      mode: 0o755
     with_items: "{{ monit_local }}"
     become: true
     tags:

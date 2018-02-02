@@ -7,14 +7,7 @@
       - installpackages
       - docker
 
-  - name: install monit-docker-check.sh
-    file:
-      dest: /usr/local/bin/monit-docker-check.sh
-      state: absent
-    become: true
-    tags:
-      - docker
-      - monit
+
 
   - name: install /usr/lib/systemd/system/docker.service file
     copy:

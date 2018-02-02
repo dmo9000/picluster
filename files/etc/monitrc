@@ -24,7 +24,8 @@ set daemon 60              # check services at 30 seconds intervals
 ## Set syslog logging. If you want to log to a standalone log file instead,
 ## specify the full path to the log file
 #
-set logfile syslog
+# set logfile syslog
+set logfile /var/log/monit.log
 
 #
 #

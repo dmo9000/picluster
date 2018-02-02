@@ -4,7 +4,8 @@ STATUS=$?
 
 case $STATUS in 
     0)
-    echo "{{ item }} service is running"
+    MAINPID=$( /bin/systemctl show -p MainPID bbsd.service | sed -e "s/^.*=//" )
+    echo "{{ item }} service is running with pid ${MAINPID}"
     exit 0
     ;;
     3)
