@@ -42,6 +42,8 @@
       - installpackages
       - selinux
 
+  - include: roles/docker.yml 
+
   - name: install managed /boot/grub/grub.conf file
     template:
       dest: /boot/grub/grub.conf

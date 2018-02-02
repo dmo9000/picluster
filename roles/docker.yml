@@ -1,0 +1,9 @@
+  - name: install docker
+    dnf:
+      name: docker
+      state: present
+    become: true
+    tags:
+      - installpackages
+      - docker
+
