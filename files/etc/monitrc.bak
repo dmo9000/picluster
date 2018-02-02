@@ -16,8 +16,8 @@
 ##
 ## Start Monit in the background (run as a daemon):
 #
-set daemon  30              # check services at 30 seconds intervals
-#   with start delay 240    # optional: delay the first check by 4-minutes (by 
+set daemon 60              # check services at 30 seconds intervals
+   with start delay 5    # optional: delay the first check by 4-minutes (by 
 #                           # default Monit check immediately after Monit start)
 #
 #
@@ -52,7 +52,7 @@ set logfile syslog
 # will use the second mail server in the list and so on. By default Monit uses 
 # port 25 - it is possible to override this with the PORT option.
 #
-set mailserver 192.168.0.190, {{ inventory_hostname }}, localhost 
+set mailserver 192.168.0.190, cuatro, localhost 
 #set mailserver mail.bar.baz,               # primary mailserver
 #                backup.bar.baz port 10025,  # backup mailserver on port 10025
 #                localhost                   # fallback relay
@@ -65,9 +65,9 @@ set mailserver 192.168.0.190, {{ inventory_hostname }}, localhost
 ## by using the SLOTS option (if omitted, the queue is limited by space
 ## available in the back end filesystem).
 #
-set eventqueue
-    basedir /var/monit  # set the base directory where events will be stored
-    slots 100           # optionally limit the queue size
+#set eventqueue
+#    basedir /var/monit  # set the base directory where events will be stored
+#    slots 100           # optionally limit the queue size
 #
 #
 ## Send status and events to M/Monit (for more informations about M/Monit 
@@ -103,14 +103,14 @@ set mail-format {
 ## or sender using the MAIL-FORMAT statement. Macros such as $DATE, etc.
 ## are expanded at runtime. For example, to override the sender, use:
 #
-set mail-format { from: dan.morriss115@gmail.com }
+#set mail-format { from: dan.morriss115@gmail.com }
 #
 #
 ## You can set alert recipients whom will receive alerts if/when a 
 ## service defined in this file has errors. Alerts may be restricted on 
 ## events by using a filter as in the second example below.
 #
-set alert dan.morriss115@gmail.com                       # receive all alerts
+#set alert dan.morriss115@gmail.com                       # receive all alerts
 #
 ## Do not alert when Monit starts, stops or performs a user initiated action.
 ## This filter is recommended to avoid getting alerts for trivial cases.
@@ -171,23 +171,49 @@ set httpd port 2812 and
 ## problem remains, it is possible to disable monitoring using the TIMEOUT
 ## statement. This service depends on another service (apache_bin) which
 ## is defined above.
+#
+
+## Local service checks
+#
 
 
-check host picluster-190 with address 192.168.0.190 every 5 cycles
+check program sshd-service with path "/usr/local/bin/monit-sshd-check.sh"
+with timeout 30 seconds
+if status = 3 then alert
+
+check program postfix-service with path "/usr/local/bin/monit-postfix-check.sh"
+with timeout 30 seconds
+if status = 3 then alert
+
+check program named-service with path "/usr/local/bin/monit-named-check.sh"
+with timeout 30 seconds
+if status = 3 then alert
+
+check program httpd-service with path "/usr/local/bin/monit-httpd-check.sh"
+with timeout 30 seconds
+if status = 3 then alert
+
+check program docker-service with path "/usr/local/bin/monit-docker-check.sh"
+with timeout 30 seconds
+if status = 3 then alert
+
+check program bbsd-service with path "/usr/local/bin/monit-bbsd-check.sh"
+with timeout 30 seconds
+if status = 3 then alert
+
+check program haproxy-service with path "/usr/local/bin/monit-haproxy-check.sh"
+with timeout 30 seconds
+if status = 3 then alert
+
+
+
+check host picluster-190 with address 192.168.0.190 every 1 cycles
     if failed
-        port 8080
-        protocol http
-        request "/"
-        status = 200 
-    then alert
-    if failed
-        port 8024
-    then alert
-    if failed
-        port 8023
+        port 23
     then alert
     if failed
         port 2812 
+        with timeout 15 seconds for 3 times within 4 cycles
     then alert
     if failed
         port 80
@@ -203,10 +229,6 @@ check host picluster-190 with address 192.168.0.190 every 5 cycles
         port 25
         protocol smtp
     then alert
-    if failed
-        port 22
-        protocol ssh
-    then alert
 
 check host uno-180 with address 192.168.0.180 
    if failed
@@ -214,33 +236,20 @@ check host uno-180 with address 192.168.0.180
         protocol http
         request "/"
         status = 200
+        with timeout 15 seconds for 3 times within 4 cycles 
     then alert
     if failed
         port 8024
-    then alert
-    if failed
-        port 8023
-    then alert
-    if failed
-        port 2812
-    then alert
-    if failed
-        port 80
-        protocol http
-        request "/"
-        status = 200
+        with timeout 15 seconds for 3 times within 4 cycles 
     then alert
     if failed
         port 53
         protocol dns
     then alert
     if failed
-        port 25
-        protocol smtp
-    then alert
-    if failed
         port 22
         protocol ssh
+	with timeout 15 seconds for 3 times within 4 cycles
     then alert
 
 
@@ -250,34 +259,22 @@ check host dos-181 with address 192.168.0.181
         protocol http
         request "/"
         status = 200
+        with timeout 15 seconds for 3 times within 4 cycles
     then alert
     if failed
         port 8024
-    then alert
-    if failed
-        port 8023
-    then alert
-    if failed
-        port 2812
-    then alert
-    if failed
-        port 80
-        protocol http
-        request "/"
-        status = 200
+        with timeout 15 seconds for 3 times within 4 cycles
     then alert
     if failed
         port 53
         protocol dns
     then alert
     if failed
-        port 25
-        protocol smtp
-    then alert
-    if failed
         port 22
         protocol ssh
+    with timeout 15 seconds for 3 times within 4 cycles
     then alert
+
 
 check host tres-182 with address 192.168.0.182
    if failed
@@ -285,34 +282,22 @@ check host tres-182 with address 192.168.0.182
         protocol http
         request "/"
         status = 200
+        with timeout 15 seconds for 3 times within 4 cycles
     then alert
     if failed
         port 8024
-    then alert
-    if failed
-        port 8023
-    then alert
-    if failed
-        port 2812
-    then alert
-    if failed
-        port 80
-        protocol http
-        request "/"
-        status = 200
+        with timeout 15 seconds for 3 times within 4 cycles
     then alert
     if failed
         port 53
         protocol dns
     then alert
     if failed
-        port 25
-        protocol smtp
-    then alert
-    if failed
         port 22
         protocol ssh
+    with timeout 15 seconds for 3 times within 4 cycles
     then alert
+
 
 check host cuatro-183 with address 192.168.0.183
    if failed
@@ -320,34 +305,22 @@ check host cuatro-183 with address 192.168.0.183
         protocol http
         request "/"
         status = 200
+        with timeout 15 seconds for 3 times within 4 cycles
     then alert
     if failed
         port 8024
-    then alert
-    if failed
-        port 8023
-    then alert
-    if failed
-        port 2812
-    then alert
-    if failed
-        port 80
-        protocol http
-        request "/"
-        status = 200
+        with timeout 15 seconds for 3 times within 4 cycles
     then alert
     if failed
         port 53
         protocol dns
     then alert
     if failed
-        port 25
-        protocol smtp
-    then alert
-    if failed
         port 22
         protocol ssh
+    with timeout 15 seconds for 3 times within 4 cycles
     then alert
+
 
 
 #check process apache with pidfile /usr/local/apache/logs/httpd.pid
