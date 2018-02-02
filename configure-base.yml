@@ -14,6 +14,8 @@
 
     monit_local: { "sshd", "postfix", "named", "haproxy", "bbsd", "docker", "httpd" }
 
+    monit_remote: { "uno", "dos", "tres", "cuatro" }
+
   vars_prompt:
     - name: "ansible_password"
       prompt: "Enter password for bootstrap user"
@@ -225,8 +227,9 @@
     tags:
       - monit
 
-  - name: install monit-generic-check.sh
-    template:
+
+  - name: install /etc/monit.d/ local services checks 
+    file:
       dest: /etc/monit.d/local-service-{{ item }}
       src: files/etc/monit.d/local-service-template
       owner: root
@@ -237,9 +240,22 @@
     tags:
       - monit
 
-  - name: install /etc/monit.d/services checks 
+
+  - name: install /etc/monit.d/ remote services checks 
+    file:
+      dest: /etc/monit.d/remote-host-{{ item }}
+      src: files/etc/monit.d/remote-host-template
+      owner: root
+      group: root
+      mode: 0o644
+    with_items: "{{ monit_remote }}"
+    become: true
+    tags:
+      - monit
+
+  - name: install monit-generic-check.sh
     template:
-      dest: /etc/monit.d/{{ item }}-check.sh
+      dest: /usr/local/bin/monit-{{ item }}-check.sh
       src: files/usr/local/bin/monit-generic-check.sh
       owner: root
       group: root
