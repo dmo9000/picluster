@@ -1,4 +1,4 @@
-check host {{ item }}-alt with address {{ item }} 
+check host {{ item }} with address {{ item }} 
    if failed
         port 8080
         protocol http

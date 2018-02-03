@@ -7,6 +7,23 @@
       - installpackages
       - docker
 
+  - name: add docker group
+    group: 
+      name: docker
+      gid: 10000
+    become: true
+    tags:
+      - docker      
+
+  - name: adding user bootstrap to docker group  
+    user: 
+      name: bootstrap
+      groups: docker
+      append: yes
+    become: true
+    tags:
+      - docker      
+
   - name: install /usr/lib/systemd/system/docker.service file
     copy:
       dest: /usr/lib/systemd/system/docker.service
@@ -20,12 +37,6 @@
 
   # LOL @ systemd
 
-#  - name: systemd daemon reload
-#    shell: /bin/systemctl daemon-reload
-#    become: true
-#    tags:
-#      - docker
-
   - name: start & enable docker on boot
     systemd:
       name: docker
@@ -35,3 +46,9 @@
     become: true
     tags:
       - docker      
+
+  - name: run docker hello-world
+    shell: docker run hello-world
+    tags:
+      - docker      
+
