@@ -8,21 +8,21 @@
       - docker
 
   - name: add docker group
-    group: 
+    group:
       name: docker
       gid: 10000
     become: true
     tags:
-      - docker      
+      - docker
 
-  - name: adding user bootstrap to docker group  
-    user: 
+  - name: adding user bootstrap to docker group
+    user:
       name: bootstrap
       groups: docker
       append: yes
     become: true
     tags:
-      - docker      
+      - docker
 
   - name: install /usr/lib/systemd/system/docker.service file
     copy:
@@ -33,7 +33,7 @@
       mode: 0o644
     become: true
     tags:
-      - docker      
+      - docker
 
   # LOL @ systemd
 
@@ -45,10 +45,10 @@
       daemon_reload: yes
     become: true
     tags:
-      - docker      
+      - docker
 
   - name: run docker hello-world
     shell: docker run hello-world
     tags:
-      - docker      
+      - docker
 

@@ -25,7 +25,7 @@
     tags:
       - tdftool
 
-  - name: install tdftool 
+  - name: install tdftool
     shell: "(cd /home/bootstrap/git-local/tdftool && make install)"
     become: true
     tags:
@@ -34,7 +34,7 @@
   - name: remove ~/git-local/bbsd
     file:
       dest: ~/git-local/bbsd
-      state: absent    
+      state: absent
     tags:
       - bbsd
 
@@ -56,11 +56,11 @@
   - name: build bbsd sources
     shell: "(cd ~/git-local/bbsd &&  make clean && make)"
     tags:
-      - bbsd   
+      - bbsd
 
   - name: install /usr/lib/systemd/system/bbsd.service file
     copy:
-      dest: /usr/lib/systemd/system/bbsd.service 
+      dest: /usr/lib/systemd/system/bbsd.service
       src: files/usr/lib/systemd/system/bbsd.service
       owner: root
       group: root
@@ -83,7 +83,7 @@
     shell: "(cd /home/bootstrap/git-local/bbsd && make install)"
     become: true
     tags:
-      - bbsd   
+      - bbsd
 
   - name: show installation
     shell: find /usr/local/bbsd
@@ -95,7 +95,7 @@
       repo: 'https://github.com/dmo9000/z80oem.git'
       dest: ~/git-local/z80oem
     tags:
-      - oemsoftware   
+      - oemsoftware
 
   - name: make OEM software available
     shell: cp /home/bootstrap/git-local/z80oem/*.arc /usr/local/bbsd/data/

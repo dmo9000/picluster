@@ -1,15 +1,15 @@
 ---
-- hosts: all 
-  remote_user: bootstrap 
-  gather_facts: no 
+- hosts: all
+  remote_user: bootstrap
+  gather_facts: no
 
   vars_prompt:
     - name: "ansible_password"
-      prompt: "Enter password for bootstrap user" 
+      prompt: "Enter password for bootstrap user"
       hidden: yes
 
   tasks:
-  - name: show haproxy status 
+  - name: show haproxy status
     shell: service haproxy status
     become: true
 

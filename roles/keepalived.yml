@@ -36,7 +36,7 @@
       - keepalived
 
   - name: display keepalived vip
-    shell: /sbin/ip addr show 
+    shell: /sbin/ip addr show
     become: true
     tags:
       - keepalived

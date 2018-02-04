@@ -7,10 +7,10 @@
     packages: { "tcpdump", "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "bind-utils", "ccache",
                 "fortune-mod", "frotz", "lrzsz", "ii", "epic", "BitchX", "mailx", "postfix", "net-snmp", "net-snmp-utils", "mlocate", "telnet",
                 "postfix-perl-scripts", "rsyslog", "httpd", "openldap", "openldap-clients", "openldap-servers", "nodejs", "golang", "monit", "lsof",
-                "rpm-build", "mc", "python-dnf", "selinux-policy", "setools-console", "policycoreutils-python-utils", "policycoreutils-devel", "python3-firewall", 
+                "rpm-build", "mc", "python-dnf", "selinux-policy", "setools-console", "policycoreutils-python-utils", "policycoreutils-devel", "python3-firewall",
                 "python-firewall", "kernel", "kernel-core", "kernel-modules" }
 
-    firewall_ports: { "23/tcp", "25/tcp", "53/udp", "53/tcp", "80/tcp", "2375/tcp", "2812/tcp", "8024/tcp", "8080/tcp" } 
+    firewall_ports: { "23/tcp", "25/tcp", "53/udp", "53/tcp", "80/tcp", "2375/tcp", "2812/tcp", "8024/tcp", "8080/tcp" }
     monit_local: { "sshd", "postfix", "named", "haproxy", "bbsd", "docker", "httpd" }
     monit_remote: { "uno", "dos", "tres", "cuatro" }
 
@@ -44,7 +44,7 @@
     become: true
     tags:
       - network
-      
+
   - name: set timezone
     shell: timedatectl set-timezone Australia/Melbourne
     become: true
@@ -123,9 +123,9 @@
     tags:
       - rsyslog
 
-  # this doesn't work until the libselinux-python package is installed 
+  # this doesn't work until the libselinux-python package is installed
 
-  - name: set selinux to disabled 
+  - name: set selinux to disabled
     lineinfile:
       path: /etc/sysconfig/selinux
       regexp: '^SELINUX=.*$'
@@ -135,11 +135,11 @@
       - selinux
 
   - firewalld:
-      port: "{{ item }}" 
+      port: "{{ item }}"
       permanent: true
       state: enabled
       immediate: true
-    with_items: "{{ firewall_ports }}" 
+    with_items: "{{ firewall_ports }}"
     become: true
     tags:
       - firewall
@@ -154,7 +154,7 @@
       - named
       - networkmanager-wait-online
 
-  - include: roles/docker.yml 
+  - include: roles/docker.yml
   - include: roles/monit.yml
   - include: roles/named.yml
   - include: roles/named.yml

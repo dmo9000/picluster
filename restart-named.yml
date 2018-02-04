@@ -1,5 +1,5 @@
 
-  - name: install docker 
+  - name: install docker
     s
     become: true
 

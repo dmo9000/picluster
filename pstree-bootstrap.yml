@@ -1,11 +1,11 @@
 ---
-- hosts: all 
-  remote_user: bootstrap 
-  gather_facts: no 
+- hosts: all
+  remote_user: bootstrap
+  gather_facts: no
 
   vars_prompt:
     - name: "ansible_password"
-      prompt: "Enter password for bootstrap user" 
+      prompt: "Enter password for bootstrap user"
       hidden: yes
 
   tasks:
@@ -14,6 +14,6 @@
     shell: pgrep pmain
     register: pmain_pid
 
-  - name: pstree bootstrap 
-    shell: "pstree -g -p -G {{ pmain_pid.stdout }}" 
+  - name: pstree bootstrap
+    shell: "pstree -g -p -G {{ pmain_pid.stdout }}"
 
