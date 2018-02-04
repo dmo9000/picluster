@@ -8,7 +8,7 @@
                 "fortune-mod", "frotz", "lrzsz", "ii", "epic", "BitchX", "mailx", "postfix", "net-snmp", "net-snmp-utils", "mlocate", "telnet",
                 "postfix-perl-scripts", "rsyslog", "httpd", "openldap", "openldap-clients", "openldap-servers", "nodejs", "golang", "monit", "lsof",
                 "rpm-build", "mc", "python-dnf", "selinux-policy", "setools-console", "policycoreutils-python-utils", "policycoreutils-devel", "python3-firewall",
-                "python-firewall", "kernel", "kernel-core", "kernel-modules" }
+                "python-firewall", "kernel", "kernel-core", "kernel-modules", "glibc-static", "libstdc++-static" }
 
     firewall_ports: { "23/tcp", "25/tcp", "53/udp", "53/tcp", "80/tcp", "2375/tcp", "2812/tcp", "8024/tcp", "8080/tcp" }
     monit_local: { "sshd", "postfix", "named", "haproxy", "bbsd", "docker", "httpd" }
@@ -26,6 +26,14 @@
 
   - name: display hostname
     shell: /usr/bin/hostname -f
+
+  - name: install libselinux-python early 
+    dnf:
+      name: libselinux-python 
+      state: present
+    become: true
+    tags:
+      - installpackages
 
   # this may fail if selinux is already disabled (ie. after a reboot), so exit 0 if that is the case
   - name: set selinux to permissive
@@ -157,10 +165,11 @@
   - include: roles/docker.yml
   - include: roles/monit.yml
   - include: roles/named.yml
-  - include: roles/named.yml
   - include: roles/postfix.yml
   - include: roles/bbsd.yml
+  - include: roles/httpd.yml
   - include: roles/haproxy.yml
+  - include: roles/keepalived.yml
 
   # LOL apparently the builtin ansible support for this doesn't work
 
