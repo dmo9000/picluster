@@ -5,7 +5,8 @@ STATUS=$?
 case $STATUS in 
     0)
     MAINPID=$( /bin/systemctl show -p MainPID {{ item }}.service | sed -e "s/^.*=//" )
-    echo "{{ item }} service is running with pid ${MAINPID}"
+		MEMSIZE=$( cat /proc/${MAINPID}/status  | grep "^VmSize:" | sed -e "s/^VmSize:\s*//" )
+    echo "{{ item }} process id ${MAINPID}, size ${MEMSIZE}"
     exit 0
     ;;
     3)
