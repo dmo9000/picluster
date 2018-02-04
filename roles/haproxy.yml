@@ -1,4 +1,4 @@
- - name: install haproxy.cfg
+  - name: install haproxy.cfg
     template:
       dest: /etc/haproxy/haproxy.cfg
       src: files/etc/haproxy/haproxy.cfg
