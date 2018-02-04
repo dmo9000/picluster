@@ -1,0 +1,26 @@
+  - name: set mail relay host for postfix
+    shell: /usr/sbin/postconf -e relayhost=mail.optusnet.com.au
+    become: true
+    tags:
+      - postfix
+
+  - name: set inet_interfaces for postfix
+    shell: /usr/sbin/postconf -e inet_interfaces=all
+    become: true
+    tags:
+      - postfix
+
+  - name: set mynetworks for postfix
+    shell: /usr/sbin/postconf -e mynetworks=192.168.0.0/24,127.0.0.1
+    become: true
+    tags:
+      - postfix
+
+  - name: start and enable postfix
+    systemd:
+      name: postfix
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - postfix

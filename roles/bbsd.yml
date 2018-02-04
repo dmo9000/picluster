@@ -1,0 +1,123 @@
+  - name: remove ~/git-local/tdftool
+    file:
+      dest: ~/git-local/tdftool
+      state: absent
+    tags:
+      - tdftool
+
+  - name: create ~/git-local/tdftool
+    file:
+      dest: ~/git-local/tdftool
+      state: directory
+      recurse: true
+    tags:
+      - tdftool
+
+  - name: checkout tdftool sources to ~/git-local/tdftool
+    git:
+      repo: 'https://github.com/dmo9000/tdftool.git'
+      dest: ~/git-local/tdftool
+    tags:
+      - tdftool
+
+  - name: build tdftool sources
+    shell: "(cd ~/git-local/tdftool &&  make clean && make)"
+    tags:
+      - tdftool
+
+  - name: install tdftool 
+    shell: "(cd /home/bootstrap/git-local/tdftool && make install)"
+    become: true
+    tags:
+      - tdftool
+
+  - name: remove ~/git-local/bbsd
+    file:
+      dest: ~/git-local/bbsd
+      state: absent    
+    tags:
+      - bbsd
+
+  - name: create ~/git-local/bbsd
+    file:
+      dest: ~/git-local/bbsd
+      state: directory
+      recurse: true
+    tags:
+      - bbsd
+
+  - name: checkout bbsd sources to ~/git-local/bbsd
+    git:
+      repo: 'https://github.com/dmo9000/bbsd.git'
+      dest: ~/git-local/bbsd
+    tags:
+      - bbsd
+
+  - name: build bbsd sources
+    shell: "(cd ~/git-local/bbsd &&  make clean && make)"
+    tags:
+      - bbsd   
+
+  - name: install /usr/lib/systemd/system/bbsd.service file
+    copy:
+      dest: /usr/lib/systemd/system/bbsd.service 
+      src: files/usr/lib/systemd/system/bbsd.service
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - bbsd
+
+  - name: stop bbsd prior to upgrade
+    systemd:
+      name: bbsd
+      state: stopped
+      enabled: yes
+    become: true
+    tags:
+      - bbsd
+      - bbsd_stop
+
+  - name: install bbsd
+    shell: "(cd /home/bootstrap/git-local/bbsd && make install)"
+    become: true
+    tags:
+      - bbsd   
+
+  - name: show installation
+    shell: find /usr/local/bbsd
+    tags:
+      - bbsd
+
+  - name: refresh OEM software
+    git:
+      repo: 'https://github.com/dmo9000/z80oem.git'
+      dest: ~/git-local/z80oem
+    tags:
+      - oemsoftware   
+
+  - name: make OEM software available
+    shell: cp /home/bootstrap/git-local/z80oem/*.arc /usr/local/bbsd/data/
+    become: true
+    tags:
+      - oemsoftware
+
+  - name: start & enable bbsd
+    systemd:
+      name: bbsd
+      state: restarted
+      enabled: yes
+      daemon_reload: yes
+    become: true
+    tags:
+      - bbsd
+      - bbsd_restart
+
+  - name: show bbsd service status
+    shell: systemctl status bbsd
+    become: true
+    tags:
+      - bbsd
+      - bbsd_status
+

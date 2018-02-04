@@ -1,0 +1,50 @@
+  # NOTE: apparently we can do this with a systemd "drop-in". Research.
+
+  - name: install /usr/lib/systemd/system/named.service file
+    copy:
+      dest: /usr/lib/systemd/system/named.service
+      src: files/usr/lib/systemd/system/named.service
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - named
+
+  - name: create /var/log/named
+    file:
+      dest: /var/log/named
+      state: directory
+      owner: named
+      group: named
+      recurse: true
+    become: true
+    tags:
+      - named
+
+  - name: install /etc/named.conf
+    template:
+      dest: /etc/named.conf
+      src: files/etc/named.conf
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - named
+
+  - name: start & enable named
+    systemd:
+      name: named
+      state: restarted
+      enabled: yes
+      daemon_reload: yes
+    become: true
+    tags:
+      - named
+
+  - name: display named status
+    shell: /bin/systemctl status named.service
+    become: true
+    tags:
+      - named

@@ -1,0 +1,42 @@
+  - name: discover vrrp_priority
+    set_fact:
+      vrrp_priority: "{{ ansible_eth0.ipv4.address.split('.')[3] }}"
+    tags:
+      - keepalived
+
+  - debug: msg="vrrp_priority is {{ vrrp_priority }}"
+    tags:
+      - keepalived
+
+  - name: install keepalived.conf
+    template:
+      dest: /etc/keepalived/keepalived.conf
+      src: "files/etc/keepalived/keepalived.conf.{{ inventory_hostname }}"
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - keepalived
+
+  - name: start & enable keepalived
+    systemd:
+      name: keepalived
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - keepalived
+      - restart_keepalived
+
+  - name: display keepalived status
+    shell: /bin/systemctl status keepalived.service
+    become: true
+    tags:
+      - keepalived
+
+  - name: display keepalived vip
+    shell: /sbin/ip addr show 
+    become: true
+    tags:
+      - keepalived

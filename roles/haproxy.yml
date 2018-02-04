@@ -1,0 +1,21 @@
+ - name: install haproxy.cfg
+    template:
+      dest: /etc/haproxy/haproxy.cfg
+      src: files/etc/haproxy/haproxy.cfg
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - haproxy
+
+  - name: start & enable haproxy
+    systemd:
+      name: haproxy
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - haproxy
+      - haproxy_restart
+

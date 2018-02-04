@@ -1,0 +1,35 @@
+  - name: install /var/www/html/index.html file 
+    template:
+      dest: /var/www/html/index.html
+      src: content/index.html 
+      owner: nobody 
+      group: nobody
+      mode: 0o644
+    become: true
+    tags:
+      - httpd 
+      - content
+
+  - name: set Apache default port to 8080 
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^Listen [0-8]+$'
+      line: 'Listen 8080'
+    become: true
+    tags:
+      - httpd
+
+  - name: start & enable httpd 
+    systemd:
+      name: httpd
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - httpd
+
+  - name: display httpd status
+    shell: /bin/systemctl status httpd.service
+    become: true
+    tags:
+      - httpd

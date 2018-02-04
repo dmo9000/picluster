@@ -1,0 +1,86 @@
+  - name: stop & disable monit
+    systemd:
+      name: monit
+      state: stopped 
+      enabled: no 
+    become: true
+    tags:
+      - monit
+      - monitstop
+
+  - name: remove /etc/monit.d/logging
+    file:
+      dest: /etc/monit.d/logging
+      state: absent
+    become: true
+    tags:
+      - monit
+
+
+  - name: install /etc/monit.d/ local services checks 
+    template:
+      dest: /etc/monit.d/local-service-{{ item }}
+      src: files/etc/monit.d/local-service-template
+      owner: root
+      group: root
+      mode: 0o644
+    with_items: "{{ monit_local }}"
+    become: true
+    tags:
+      - monit
+
+
+  - name: install /etc/monit.d/ remote services checks 
+    template:
+      dest: /etc/monit.d/remote-host-{{ item }}
+      src: files/etc/monit.d/remote-host-template
+      owner: root
+      group: root
+      mode: 0o644
+    with_items: "{{ monit_remote }}"
+    become: true
+    tags:
+      - monit
+
+  - name: install monit-generic-check.sh
+    template:
+      dest: /usr/local/bin/monit-{{ item }}-check.sh
+      src: files/usr/local/bin/monit-generic-check.sh
+      owner: root
+      group: root
+      mode: 0o755
+    with_items: "{{ monit_local }}"
+    become: true
+    tags:
+      - monit    
+
+ - name: install monitrc 
+    template:
+      dest: /etc/monitrc
+      src: "files/etc/monitrc"
+      owner: root
+      group: root
+      mode: 0o700
+    become: true
+    tags:
+      - monit 
+
+  - name: install monit cron job
+    template:
+      dest: /var/spool/cron/root
+      src: "files/var/spool/cron/root"
+      owner: root
+      group: root
+      mode: 0o600
+    become: true
+    tags:
+      - monit
+
+  - name: start & enable monit
+    systemd:
+      name: monit
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - monit
