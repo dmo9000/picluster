@@ -10,11 +10,11 @@
 
   tasks:
   - name: reboot nodes
-    shell: /sbin/init 0 
+    shell: /sbin/init 0
     become: true
     ignore_errors: true
 
-  - name: ping till down 
-    shell: ping "{{ inventory_hostname }}" 
+  - name: ping till down
+    shell: ping "{{ inventory_hostname }}"
     delegate_to: localhost
 
