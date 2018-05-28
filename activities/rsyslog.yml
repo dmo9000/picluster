@@ -1,0 +1,20 @@
+  - name: install /etc/rsyslog.conf file
+    template:
+      dest: /etc/rsyslog.conf
+      src: files/etc/rsyslog.conf
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - network
+
+  - name: restart and enable rsyslog
+    systemd:
+      name: rsyslog
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - rsyslog
+

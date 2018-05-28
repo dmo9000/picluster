@@ -1,0 +1,66 @@
+  - name: set hostname permanently
+    shell: "/usr/bin/hostnamectl set-hostname {{ inventory_hostname }}"
+    become: true
+
+  - name: display hostname
+    shell: /usr/bin/hostname -f
+
+  - name: install managed /boot/grub/grub.conf file
+    template:
+      dest: /boot/grub/grub.conf
+      src: files/boot/grub/grub.conf
+      owner: root
+      group: root
+      mode: 0o664
+    become: true
+    tags:
+      - network
+
+  - name: set timezone
+    shell: timedatectl set-timezone Australia/Melbourne
+    become: true
+
+  - name: display timezone
+    shell: timedatectl
+    become: true
+
+  - name: install /etc/hosts file
+    copy:
+      dest: /etc/hosts
+      src: files/etc/hosts
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+
+  - name: install /etc/dnf/dnf.conf file
+    copy:
+      dest: /etc/dnf/dnf.conf
+      src: files/etc/dnf/dnf.conf
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - dnf
+
+  - name: install /etc/dhcp/dhclient.conf file
+    template:
+      dest: /etc/dhcp/dhclient.conf
+      src: files/etc/dhcp/dhclient.conf
+      owner: root
+      group: root
+      mode: 0o644
+    become: true
+    tags:
+      - network
+
+  - name: restart NetworkManager to pickup resolver settings
+    systemd:
+      name: NetworkManager
+      state: restarted
+      enabled: yes
+    become: true
+    tags:
+      - network
+

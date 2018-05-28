@@ -1,0 +1,16 @@
+  # this may fail if selinux is already disabled (ie. after a reboot), so exit 0 if that is the case
+  - name: set selinux to permissive
+    shell: /sbin/setenforce 0 || exit 0
+    become: true
+    tags:
+      - selinux
+
+  - name: set selinux to disabled
+    lineinfile:
+      path: /etc/sysconfig/selinux
+      regexp: '^SELINUX=.*$'
+      line: 'SELINUX=disabled'
+    become: true
+    tags:
+      - selinux
+

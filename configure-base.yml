@@ -4,7 +4,7 @@
   gather_facts: yes
 
   vars:
-    packages: { "tcpdump", "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "bind-utils", "ccache",
+    packages: { "libselinux-utils", "tcpdump", "git", "ntp", "psmisc", "net-tools", "libselinux-python", "which", "gcc-c++", "keepalived", "haproxy", "bind", "bind-utils", "ccache",
                 "fortune-mod", "frotz", "lrzsz", "ii", "epic", "BitchX", "mailx", "postfix", "net-snmp", "net-snmp-utils", "mlocate", "telnet",
                 "postfix-perl-scripts", "rsyslog", "httpd", "openldap", "openldap-clients", "openldap-servers", "nodejs", "golang", "monit", "lsof",
                 "rpm-build", "mc", "python-dnf", "selinux-policy", "setools-console", "policycoreutils-python-utils", "policycoreutils-devel", "python3-firewall",
@@ -20,105 +20,10 @@
       hidden: yes
 
   tasks:
-  - name: set hostname permanently
-    shell: "/usr/bin/hostnamectl set-hostname {{ inventory_hostname }}"
-    become: true
 
-  - name: display hostname
-    shell: /usr/bin/hostname -f
-
-  - name: install /etc/yum.repos.d/kubernetes.repo file
-    file:
-      dest: /etc/yum.repos.d/kubernetes.repo
-      state: absent
-    become: true
-
-  - name: install libselinux-python early
-    dnf:
-      name: libselinux-python
-      state: present
-    become: true
-    tags:
-      - installpackages
-
-  # this may fail if selinux is already disabled (ie. after a reboot), so exit 0 if that is the case
-  - name: set selinux to permissive
-    shell: /sbin/setenforce 0 || exit 0
-    become: true
-    tags:
-      - selinux
-
-  - name: install managed /boot/grub/grub.conf file
-    template:
-      dest: /boot/grub/grub.conf
-      src: files/boot/grub/grub.conf
-      owner: root
-      group: root
-      mode: 0o664
-    become: true
-    tags:
-      - network
-
-  - name: set timezone
-    shell: timedatectl set-timezone Australia/Melbourne
-    become: true
-
-  - name: display timezone
-    shell: timedatectl
-    become: true
-
-  - name: install /etc/hosts file
-    copy:
-      dest: /etc/hosts
-      src: files/etc/hosts
-      owner: root
-      group: root
-      mode: 0o644
-    become: true
-
-  - name: install /etc/dnf/dnf.conf file
-    copy:
-      dest: /etc/dnf/dnf.conf
-      src: files/etc/dnf/dnf.conf
-      owner: root
-      group: root
-      mode: 0o644
-    become: true
-    tags:
-      - dnf
-
-  - name: install /etc/dhcp/dhclient.conf file
-    template:
-      dest: /etc/dhcp/dhclient.conf
-      src: files/etc/dhcp/dhclient.conf
-      owner: root
-      group: root
-      mode: 0o644
-    become: true
-    tags:
-      - network
-
-#  - name: install /etc/yum.repos.d/kubernetes.repo file
-#    template:
-#      dest:  /etc/yum.repos.d/kubernetes.repo
-#      src: files/etc/yum.repos.d/kubernetes.repo
-#      owner: root
-#      group: root
-#      mode: 0o644
-#    become: true
-#    tags:
-#      - dnf
-
+  - include: activities/hostbase.yml
+  - include: activities/selinux.yml
   - include: activities/disk-resize.yml
-
-  - name: restart NetworkManager to pickup resolver settings
-    systemd:
-      name: NetworkManager
-      state: restarted
-      enabled: yes
-    become: true
-    tags:
-      - network
 
   - name: install prerequisite packages
     dnf:
@@ -130,36 +35,7 @@
       - installpackages
       - ntpd
 
-  - name: install /etc/rsyslog.conf file
-    template:
-      dest: /etc/rsyslog.conf
-      src: files/etc/rsyslog.conf
-      owner: root
-      group: root
-      mode: 0o644
-    become: true
-    tags:
-      - network
-
-  - name: restart and enable rsyslog
-    systemd:
-      name: rsyslog
-      state: restarted
-      enabled: yes
-    become: true
-    tags:
-      - rsyslog
-
-  # this doesn't work until the libselinux-python package is installed
-
-  - name: set selinux to disabled
-    lineinfile:
-      path: /etc/sysconfig/selinux
-      regexp: '^SELINUX=.*$'
-      line: 'SELINUX=disabled'
-    become: true
-    tags:
-      - selinux
+  - include: activities/rsyslog.yml
 
   - firewalld:
       port: "{{ item }}"
