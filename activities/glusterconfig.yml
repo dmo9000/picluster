@@ -15,12 +15,6 @@
         state: directory
     become: true
 
-  - name: create /glustervolumes/vol1 image
-    shell: dd if=/dev/zero of=/glustervolumes/vol1.img bs=1048576 count=1024
-    args:
-        creates: /glustervolumes/vol1.img
-    become: true
-
   - name: gluster peer probe 
     shell: "gluster peer probe {{ item }}"
     become: true
@@ -36,4 +30,25 @@
     become: true
 
         
+  - name: create mount point /glustermount
+    file:
+        name: /glustermount
+        state: directory
+    become: true
 
+  - name: force unmount of /glustermount
+    mount:
+        path: /glustermount
+        state: unmounted 
+    become: true
+
+  - name: mount /glustermount
+    mount:
+        path: /glustermount
+        src: "{{ inventory_hostname }}:/testvol"
+        fstype: glusterfs
+        state: mounted
+    become: true
+
+
+    

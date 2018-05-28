@@ -1,0 +1,2 @@
+gluster volume create testvol replica 2 transport tcp uno:/glustervolumes dos:/glustervolumes tres:/glustervolumes cuatro:/glustervolumes 
+gluster volume start testvol
