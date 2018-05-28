@@ -1,0 +1,39 @@
+  - name: enable glusterfs services
+    systemd:
+      name: "{{ item }}" 
+      enabled: yes
+      state: restarted
+    become: true
+    with_items: 
+        - glusterd
+        - glusterfsd
+        - glusterfssharedstorage
+
+  - name: create /glustervolumes directory for holding bricks
+    file: 
+        path: /glustervolumes
+        state: directory
+    become: true
+
+  - name: create /glustervolumes/vol1 image
+    shell: dd if=/dev/zero of=/glustervolumes/vol1.img bs=1048576 count=1024
+    args:
+        creates: /glustervolumes/vol1.img
+    become: true
+
+  - name: gluster peer probe 
+    shell: "gluster peer probe {{ item }}"
+    become: true
+    when: item != inventory_hostname
+    with_items:
+        - uno
+        - dos
+        - tres
+        - cuatro
+
+  - name: gluster peer status 
+    shell: "gluster peer status"
+    become: true
+
+        
+
