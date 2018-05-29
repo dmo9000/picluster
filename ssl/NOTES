@@ -1,0 +1,6 @@
+TEST CERT ONLY
+
+openssl genrsa -out picluster.key 1024
+openssl req -new -key picluster.key -out picluster.csr
+openssl x509 -req -days 365 -in picluster.csr -signkey picluster.key -out picluster.crt
+cat picluster.crt picluster.key | tee picluster.pem
