@@ -19,4 +19,8 @@ or:
 The latter will marginally function for accepting the self-signed certificate, and basic testing, 
 however as it's not a telnet client, it's not acceptable for proper testing of SSL-wrapped telnet.
 
+TESTING ON THE LOADBALANCER
 
+    tcpdump -X -i  any tcp port 24
+
+(ensure the traffic is encrypted)
