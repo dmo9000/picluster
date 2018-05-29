@@ -7,3 +7,16 @@ See https://serversforhackers.com/c/using-ssl-certificates-with-haproxy for the 
     openssl x509 -req -days 365 -in picluster.csr -signkey picluster.key -out picluster.crt
     cat picluster.crt picluster.key | tee picluster.pem
 
+CHECK WHETHER THE CERTIFICATE IS BEING PRESENTED
+
+    gnutls-cli picluster:24
+
+or:
+
+    openssl s_client -showcerts -connect picluster:24
+
+
+The latter will marginally function for accepting the self-signed certificate, and basic testing, 
+however as it's not a telnet client, it's not acceptable for proper testing of SSL-wrapped telnet.
+
+

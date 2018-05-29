@@ -9,6 +9,17 @@
     tags:
       - haproxy
 
+  - name: install test SSL cert 
+    template:
+      dest: /etc/ssl/picluster.pem
+      src: ssl/picluster.pem 
+      owner: root
+      group: root
+      mode: 0o640
+    become: true
+    tags:
+      - haproxy
+
   - name: start & enable haproxy
     systemd:
       name: haproxy
