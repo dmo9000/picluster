@@ -9,7 +9,7 @@
                 "postfix-perl-scripts", "rsyslog", "httpd", "openldap", "openldap-clients", "openldap-servers", "nodejs", "golang", "monit", "lsof",
                 "rpm-build", "mc", "python-dnf", "selinux-policy", "setools-console", "policycoreutils-python-utils", "policycoreutils-devel", "python3-firewall",
                 "python-firewall", "kernel", "kernel-core", "kernel-modules", "glibc-static", "libstdc++-static", "django", "kubernetes", "kubernetes-kubeadm", "SDL2-devel", "libpng-devel",
-                "glusterfs-server", "glusterfs-client" }
+                "glusterfs-server", "glusterfs-client", "java-1.8.0-openjdk" }
 
     firewall_ports: { "23/tcp", "24/tcp", "25/tcp", "53/udp", "53/tcp", "80/tcp", "2375/tcp", "2812/tcp", "8024/tcp", "8080/tcp",
                       "111/tcp", "24007/tcp", "24008/tcp", "24009/tcp", "24010/tcp", "49152/tcp", "49153/tcp" }
@@ -68,6 +68,9 @@
   - include: roles/httpd.yml
   - include: roles/haproxy.yml
   - include: roles/keepalived.yml
+  - include: roles/elkstack.yml
+    tags:
+        - elkstack
 
   # experimental 4-way glusterfs volume
   

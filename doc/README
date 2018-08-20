@@ -1,0 +1,9 @@
+ELK STACK NOTES
+
+https://www.linuxtechi.com/install-elk-stack-elasticsearch-logstash-kibana-centos7-rhel7/
+
+Install the OpenJDK 8 from the standard Fedora repo. 
+
+ElasticSearch 6 for Fedora here:
+
+https://www.elastic.co/guide/en/elasticsearch/reference/current/rpm.html#rpm-repo
