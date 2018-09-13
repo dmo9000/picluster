@@ -24,7 +24,7 @@
     tags:
       - docker
 
-  - name: set selinux to disabled
+  - name: set docker OPTIONS in /etc/sysconfig/docker 
     lineinfile:
       path: /etc/sysconfig/docker
       regexp: '^OPTIONS=.*$'

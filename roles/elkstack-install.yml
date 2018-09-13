@@ -1,0 +1,75 @@
+  - name: install elkstack repo file
+    copy: 
+        src: files/etc/yum.repos.d/elkstack.repo
+        dest: /etc/yum.repos.d/elkstack.repo
+        owner: root
+        group: root
+        mode: 0o644
+    become: true
+    tags:
+      - elkstack
+
+  - name: install elasticsearch 6
+    dnf:
+      name: elasticsearch 
+      state: present
+    become: true
+    tags:
+      - elkstack
+
+  - name: set elasticsearch ES_JAVA_OPTS in /etc/sysconfig/elasticsearch
+    lineinfile:
+      path: /etc/sysconfig/elasticsearch
+      regexp: '^ES_JAVA_OPTS=.*$'
+      line: 'ES_JAVA_OPTS="-Xms64m -Xmx128m"' 
+    become: true
+    tags:
+      - elkstack 
+
+  - name: start & enable elasticsearch on boot
+    systemd:
+      name: elasticsearch 
+      state: restarted
+      enabled: yes
+      daemon_reload: yes
+    become: true
+    tags:
+      - elkstack 
+
+
+  - name: install logstash 
+    dnf:
+      name: logstash
+      state: present
+    become: true
+    tags:
+      - elkstack
+
+  - name: start & enable logstash on boot
+    systemd:
+      name: logstash
+      state: restarted
+      enabled: yes
+      daemon_reload: yes
+    become: true
+    tags:
+      - elkstack
+
+  - name: install kibana 
+    dnf:
+      name: kibana
+      state: present
+    become: true
+    tags:
+      - elkstack
+
+  - name: start & enable kibana on boot
+    systemd:
+      name: kibana 
+      state: restarted
+      enabled: yes
+      daemon_reload: yes
+    become: true
+    tags:
+      - elkstack
+
