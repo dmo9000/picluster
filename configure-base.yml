@@ -70,8 +70,7 @@
   - include: roles/keepalived.yml
   # - include: roles/elkstack-install.yml
   - include: roles/elkstack-remove.yml
-    tags:
-        - elkstack
+  - include: roles/testinfra.yml
 
   # experimental 4-way glusterfs volume
   

@@ -1,0 +1,20 @@
+#  - name: remove tests folder
+#    file:
+#        path: /home/bootstrap/testinfra
+#        state: absent
+#    become: true
+#    tags:
+#      - testinfra
+
+  - name: synchronize tests folder 
+    copy:
+      dest: /home/bootstrap/
+      src: testinfra
+    tags:
+      - testinfra
+
+  - name: run tests
+    shell: py.test --color=yes -v testinfra/*.py
+    tags:
+      - testinfra
+
