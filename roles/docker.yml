@@ -24,16 +24,14 @@
     tags:
       - docker
 
-  - name: install /usr/lib/systemd/system/docker.service file
-    copy:
-      dest: /usr/lib/systemd/system/docker.service
-      src: files/usr/lib/systemd/system/docker.service
-      owner: root
-      group: root
-      mode: 0o644
+  - name: set selinux to disabled
+    lineinfile:
+      path: /etc/sysconfig/docker
+      regexp: '^OPTIONS=.*$'
+      line: "OPTIONS='--selinux-enabled --log-driver=journald --live-restore -H=tcp://0.0.0.0:2375 -H=unix:///var/run/docker.sock'"
     become: true
     tags:
-      - docker
+      - docker 
 
   # LOL @ systemd
 
